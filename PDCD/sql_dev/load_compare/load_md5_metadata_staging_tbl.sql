@@ -39,7 +39,7 @@ LANGUAGE SQL
 AS $function$
     WITH new_snapshot AS (
         SELECT snapshot_id, processed_time AS processed_time
-        FROM pdcd_schema.load_snapshot_tbl()
+        FROM pdcd_schema.snapshot_tbl
     ),
     combined_data AS (
         SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
