@@ -21,32 +21,52 @@ CREATE TABLE analytics_schema.departments (
 );
 
 -- First Run
-SELECT * FROM pdcd_schema.load_snapshot_tbl();
-SELECT * FROM pdcd_schema.load_md5_metadata_tbl(ARRAY['analytics_schema']);
-SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.load_snapshot_tbl();
+    SELECT * FROM pdcd_schema.load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
 
--- CHANGES: Renaming, Dropping, Adding columns
-alter table analytics_schema.departments rename column location to location_old; --renaming column
-alter table analytics_schema.departments drop column ternary_location; --dropping column
-alter table analytics_schema.departments add column location_new TEXT; --adding new column
+--! CHANGES: Renaming, Dropping, Adding columns  !--
+    -- before_changes
+    -- department_id | department_name | location | primary_location | secondary_location | ternary_location
+    
+    -- renaming column
+    alter table analytics_schema.departments rename column location to location_old;
+    --dropping column
+    alter table analytics_schema.departments drop column ternary_location;
+    --adding new column
+    alter table analytics_schema.departments add column location_new TEXT;
+    -- after_changes
+    -- department_id | department_name | location_old | primary_location | secondary_location | location_new
 
 
--- Second Run and subsequent runs to compare
-SELECT * FROM pdcd_schema.load_snapshot_tbl();
-SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
-TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
-SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
+-- Second Run and subsequent runs to compare 
+    SELECT * FROM pdcd_schema.load_snapshot_tbl();
+    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
+    SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
--- Changes: Modifying column
-alter table analytics_schema.departments alter column department_name type VARCHAR(100); --modifying column
+--! Changes: Modifying column !--
+    -- before_changes
+    -- department_id | department_name | location_old | primary_location | secondary_location | location_new
+    
+    -- modifying column
+    alter table analytics_schema.departments alter column department_name type VARCHAR(150);
+    -- rename column
+    alter table analytics_schema.departments rename column location_new to ternary_location;
+    -- adding new column
+    alter table analytics_schema.departments add column manager_id TEXT;
+    -- dropping column
+    alter table analytics_schema.departments drop column location_old;
+    
+    -- after_changes
+    -- department_id | department_name | primary_location | secondary_location | ternary_location | manager_id
 
 -- Third Run and subsequent runs to compare
-SELECT * FROM pdcd_schema.load_snapshot_tbl();
-SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
-TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
-SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
-
+    SELECT * FROM pdcd_schema.load_snapshot_tbl();
+    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
+    SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
 
 SELECT metadata_id, snapshot_id, schema_name, object_type, object_type_name, object_subtype, object_subtype_name,
@@ -54,6 +74,4 @@ SELECT metadata_id, snapshot_id, schema_name, object_type, object_type_name, obj
 object_md5, processed_time, change_type
 FROM pdcd_schema.md5_metadata_tbl
 WHERE schema_name = 'analytics_schema'
-
-department_id | department_name | location | primary_location | secondary_location | ternary_location
 
