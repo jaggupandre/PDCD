@@ -1,0 +1,954 @@
+2025-11-03 11:19:25.629 IST [79595] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 11:19:25.635 IST [79595] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db application_name=psql
+2025-11-03 11:19:25.642 IST [66932] jagdish_pandre@pdcd_db LOG:  disconnection: session time: 63:32:32.729 user=jagdish_pandre database=pdcd_db host=[local]
+2025-11-03 11:20:33.051 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 11:20:33.305 IST [54409] @ LOG:  checkpoint complete: wrote 2 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.216 s, sync=0.001 s, total=0.255 s; sync files=2, longest=0.001 s, average=0.001 s; distance=4 kB, estimate=3538 kB; lsn=0/5C7D6120, redo lsn=0/5C7D60E8
+2025-11-03 11:35:12.644 IST [81114] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 11:35:12.650 IST [81114] jagdish_pandre@pdcd_db LOG:  connection authorized: user=jagdish_pandre database=pdcd_db application_name=psql
+2025-11-03 11:35:12.663 IST [79595] jagdish_pandre@test_db LOG:  disconnection: session time: 0:15:47.035 user=jagdish_pandre database=test_db host=[local]
+2025-11-03 11:36:10.875 IST [81114] jagdish_pandre@pdcd_db LOG:  disconnection: session time: 0:00:58.231 user=jagdish_pandre database=pdcd_db host=[local]
+2025-11-03 11:39:53.961 IST [81433] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 11:39:53.964 IST [81433] pdcd_user@pdcd_db LOG:  connection authorized: user=pdcd_user database=pdcd_db application_name=psql
+2025-11-03 11:58:15.374 IST [81433] pdcd_user@pdcd_db ERROR:  syntax error at or near "current_database" at character 10
+2025-11-03 11:58:15.374 IST [81433] pdcd_user@pdcd_db STATEMENT:  select * current_database();
+2025-11-03 11:59:06.394 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE public.snapshot_tbl (
+	    snapshot_id SERIAL PRIMARY KEY,              -- unique ID for each metadata snapshot
+	    snapshot_name TEXT,                          -- descriptive name (e.g., 'daily_load_2025_10_30')
+	    snapshot_process_time TIMESTAMP DEFAULT clock_timestamp(), -- timestamp when snapshot was captured
+	    created_by TEXT DEFAULT current_user,        -- who initiated the snapshot
+	    remarks TEXT                                 -- optional job or environment info
+	);
+2025-11-03 11:59:42.477 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE public.table_column_metadata_details (
+	    metadata_id SERIAL PRIMARY KEY,               -- unique record id
+	    schema_name TEXT NOT NULL,                    -- schema where table resides
+	    table_name TEXT NOT NULL,                     -- table name
+	    column_name TEXT NOT NULL,                    -- column name
+	    data_type TEXT,                               -- column data type
+	    max_length TEXT,                              -- character_maximum_length
+	    numeric_precision TEXT,                       -- numeric precision (for numeric data types)
+	    numeric_scale TEXT,                           -- numeric scale (for numeric data types)
+	    nullable TEXT,                                -- YES/NO
+	    default_value TEXT,                           -- default value or expression
+	    is_identity TEXT,                             -- identity column flag
+	    is_generated TEXT,                            -- generated (computed) column flag
+	    generation_expression TEXT,                   -- expression for generated column
+	    constraint_name TEXT,                         -- PK/FK/Unique constraint name if applicable
+	    column_position INT,                          -- ordinal position in table
+	    captured_at TIMESTAMP DEFAULT clock_timestamp(),          -- metadata snapshot timestamp
+	    snapshot_id INT REFERENCES public.snapshot_tbl(snapshot_id) -- link to snapshot table
+	);
+2025-11-03 12:00:33.322 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 12:00:39.908 IST [54409] @ LOG:  checkpoint complete: wrote 64 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=6.534 s, sync=0.031 s, total=6.587 s; sync files=52, longest=0.005 s, average=0.001 s; distance=202 kB, estimate=3204 kB; lsn=0/5C808BC0, redo lsn=0/5C808B88
+2025-11-03 12:09:28.546 IST [83717] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 12:09:28.549 IST [83717] pdcd_user@test_db LOG:  connection authorized: user=pdcd_user database=test_db application_name=psql
+2025-11-03 12:39:02.161 IST [86472] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 12:39:02.164 IST [86472] pdcd_user@postgres LOG:  connection authorized: user=pdcd_user database=postgres application_name=psql
+2025-11-03 12:39:02.172 IST [83717] pdcd_user@test_db LOG:  disconnection: session time: 0:29:33.626 user=pdcd_user database=test_db host=[local]
+2025-11-03 12:39:38.026 IST [86472] pdcd_user@postgres ERROR:  permission denied for schema public at character 15
+2025-11-03 12:39:38.026 IST [86472] pdcd_user@postgres STATEMENT:  select * from public.md5_metadata_table ;
+2025-11-03 12:39:45.944 IST [86472] pdcd_user@postgres ERROR:  permission denied for schema public at character 15
+2025-11-03 12:39:45.944 IST [86472] pdcd_user@postgres STATEMENT:  select * from public.md5_metadata_table ;
+2025-11-03 12:39:52.592 IST [86472] pdcd_user@postgres LOG:  disconnection: session time: 0:00:50.431 user=pdcd_user database=postgres host=[local]
+2025-11-03 12:40:11.925 IST [86547] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 12:40:11.930 IST [86547] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres application_name=psql
+2025-11-03 12:42:31.512 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 12:42:33.500 IST [54409] @ LOG:  checkpoint complete: wrote 20 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.950 s, sync=0.011 s, total=1.989 s; sync files=14, longest=0.006 s, average=0.001 s; distance=57 kB, estimate=2889 kB; lsn=0/5C8172D0, redo lsn=0/5C817298
+2025-11-03 12:47:31.502 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 12:47:32.033 IST [54409] @ LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.513 s, sync=0.001 s, total=0.531 s; sync files=1, longest=0.001 s, average=0.001 s; distance=4 kB, estimate=2601 kB; lsn=0/5C8184E8, redo lsn=0/5C8184B0
+2025-11-03 13:16:22.199 IST [86547] jagdish_pandre@postgres LOG:  disconnection: session time: 0:36:10.274 user=jagdish_pandre database=postgres host=[local]
+2025-11-03 13:16:30.675 IST [88642] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 13:16:30.678 IST [88642] pdcd_user@test_db LOG:  connection authorized: user=pdcd_user database=test_db application_name=psql
+2025-11-03 13:18:20.060 IST [88642] pdcd_user@test_db LOG:  disconnection: session time: 0:01:49.384 user=pdcd_user database=test_db host=[local]
+2025-11-03 13:18:47.772 IST [88803] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 13:18:47.775 IST [88803] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db application_name=psql
+2025-11-03 13:19:06.686 IST [88803] jagdish_pandre@test_db ERROR:  relation "public.snapshot_tbl" does not exist at character 15
+2025-11-03 13:19:06.686 IST [88803] jagdish_pandre@test_db STATEMENT:  select * from public.snapshot_tbl;
+2025-11-03 13:23:01.212 IST [88803] jagdish_pandre@test_db LOG:  disconnection: session time: 0:04:13.440 user=jagdish_pandre database=test_db host=[local]
+2025-11-03 14:48:27.920 IST [91428] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 14:48:27.923 IST [91428] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db application_name=psql
+2025-11-03 14:48:43.773 IST [91428] jagdish_pandre@test_db LOG:  disconnection: session time: 0:00:15.852 user=jagdish_pandre database=test_db host=[local]
+2025-11-03 14:49:07.937 IST [91496] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 14:49:07.939 IST [91496] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres application_name=psql
+2025-11-03 18:04:16.194 IST [91496] jagdish_pandre@postgres ERROR:  function current_databases() does not exist at character 8
+2025-11-03 18:04:16.194 IST [91496] jagdish_pandre@postgres HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+2025-11-03 18:04:16.194 IST [91496] jagdish_pandre@postgres STATEMENT:  select current_databases();
+2025-11-03 18:04:23.264 IST [91496] jagdish_pandre@postgres LOG:  disconnection: session time: 3:15:15.327 user=jagdish_pandre database=postgres host=[local]
+2025-11-03 18:04:34.824 IST [2858] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 18:04:34.827 IST [2858] pdcd_user@test_db LOG:  connection authorized: user=pdcd_user database=test_db application_name=psql
+2025-11-03 18:06:15.423 IST [2858] pdcd_user@test_db LOG:  disconnection: session time: 0:01:40.599 user=pdcd_user database=test_db host=[local]
+2025-11-03 18:06:50.010 IST [3027] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 18:06:50.012 IST [3027] pdcd_user@test_db LOG:  connection authorized: user=pdcd_user database=test_db application_name=psql
+2025-11-03 18:07:55.959 IST [3027] pdcd_user@test_db LOG:  disconnection: session time: 0:01:05.949 user=pdcd_user database=test_db host=[local]
+2025-11-03 18:08:04.006 IST [3114] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 18:08:04.009 IST [3114] bill_gates@test_db LOG:  connection authorized: user=bill_gates database=test_db application_name=psql
+2025-11-03 18:38:15.025 IST [81433] pdcd_user@pdcd_db LOG:  statement: drop table test_table ;
+2025-11-03 18:38:59.754 IST [81433] pdcd_user@pdcd_db LOG:  statement: create schema pdcd_schema;
+2025-11-03 18:40:36.307 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 18:40:37.931 IST [54409] @ LOG:  checkpoint complete: wrote 16 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.592 s, sync=0.005 s, total=1.625 s; sync files=15, longest=0.003 s, average=0.001 s; distance=24 kB, estimate=2343 kB; lsn=0/5C81E6F0, redo lsn=0/5C81E6B8
+2025-11-03 18:40:56.801 IST [81433] pdcd_user@pdcd_db LOG:  statement: drop table public.snapshot_tbl;
+2025-11-03 18:40:56.804 IST [81433] pdcd_user@pdcd_db ERROR:  cannot drop table snapshot_tbl because other objects depend on it
+2025-11-03 18:40:56.804 IST [81433] pdcd_user@pdcd_db DETAIL:  constraint table_column_metadata_details_snapshot_id_fkey on table table_column_metadata_details depends on table snapshot_tbl
+2025-11-03 18:40:56.804 IST [81433] pdcd_user@pdcd_db HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2025-11-03 18:40:56.804 IST [81433] pdcd_user@pdcd_db STATEMENT:  drop table public.snapshot_tbl;
+2025-11-03 18:41:07.804 IST [81433] pdcd_user@pdcd_db LOG:  statement: drop table public.table_column_metadata_details ;
+2025-11-03 18:41:09.846 IST [81433] pdcd_user@pdcd_db LOG:  statement: drop table public.snapshot_tbl;
+2025-11-03 18:41:54.782 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE pdcd_schema.snapshot_tbl (
+	    snapshot_id SERIAL PRIMARY KEY,              -- unique ID for each metadata snapshot
+	    snapshot_name TEXT,                          -- descriptive name (e.g., 'daily_load_2025_10_30')
+	    snapshot_process_time TIMESTAMP DEFAULT clock_timestamp() -- timestamp when snapshot was captured
+	    -- created_by TEXT DEFAULT current_user,        -- who initiated the snapshot
+	    -- remarks TEXT                                 -- optional job or environment info
+	);
+2025-11-03 18:45:36.953 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 18:45:41.863 IST [54409] @ LOG:  checkpoint complete: wrote 47 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.849 s, sync=0.023 s, total=4.910 s; sync files=41, longest=0.007 s, average=0.001 s; distance=209 kB, estimate=2130 kB; lsn=0/5C852D08, redo lsn=0/5C852CD0
+2025-11-03 18:51:48.206 IST [5416] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 18:51:48.210 IST [5416] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres application_name=psql
+2025-11-03 18:53:45.901 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_db.md5_metadata_table (
+	        snapshot_name TEXT,
+	        processed_time TIMESTAMP DEFAULT now(),
+	        schema_name TEXT,
+	        object_type TEXT,
+	        object_type_name TEXT,
+	        object_subtype TEXT,
+	        object_subtype_name TEXT,
+	        object_subtype_details TEXT,
+	        object_md5 TEXT
+	    );
+2025-11-03 18:53:45.903 IST [81433] pdcd_user@pdcd_db ERROR:  schema "pdcd_db" does not exist at character 28
+2025-11-03 18:53:45.903 IST [81433] pdcd_user@pdcd_db STATEMENT:  CREATE TABLE IF NOT EXISTS pdcd_db.md5_metadata_table (
+	        snapshot_name TEXT,
+	        processed_time TIMESTAMP DEFAULT now(),
+	        schema_name TEXT,
+	        object_type TEXT,
+	        object_type_name TEXT,
+	        object_subtype TEXT,
+	        object_subtype_name TEXT,
+	        object_subtype_details TEXT,
+	        object_md5 TEXT
+	    );
+2025-11-03 18:54:52.423 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	        snapshot_name TEXT,
+	        processed_time TIMESTAMP DEFAULT now(),
+	        schema_name TEXT,
+	        object_type TEXT,
+	        object_type_name TEXT,
+	        object_subtype TEXT,
+	        object_subtype_name TEXT,
+	        object_subtype_details TEXT,
+	        object_md5 TEXT
+	    );
+2025-11-03 18:55:36.869 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 18:55:39.726 IST [54409] @ LOG:  checkpoint complete: wrote 28 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.820 s, sync=0.013 s, total=2.857 s; sync files=26, longest=0.004 s, average=0.001 s; distance=126 kB, estimate=1929 kB; lsn=0/5C872858, redo lsn=0/5C872820
+2025-11-03 18:57:35.063 IST [81433] pdcd_user@pdcd_db LOG:  statement: drop table pdcd_schema.md5_metadata_table ;
+2025-11-03 18:57:37.987 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	    snapshot_name TEXT,
+	    snapshot_id INT REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	    processed_time TIMESTAMP DEFAULT now(),
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT
+	);
+2025-11-03 18:58:34.344 IST [81433] pdcd_user@pdcd_db LOG:  statement: drop table pdcd_schema.md5_metadata_table ;
+2025-11-03 18:58:41.412 IST [81433] pdcd_user@pdcd_db LOG:  statement: drop table pdcd_schema.snapshot_tbl ;
+2025-11-03 19:00:36.744 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:00:40.987 IST [54409] @ LOG:  checkpoint complete: wrote 41 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.193 s, sync=0.010 s, total=4.244 s; sync files=37, longest=0.002 s, average=0.001 s; distance=190 kB, estimate=1755 kB; lsn=0/5C8A2350, redo lsn=0/5C8A2318
+2025-11-03 19:02:37.985 IST [81433] pdcd_user@pdcd_db ERROR:  syntax error at or near "Step" at character 1
+2025-11-03 19:02:37.985 IST [81433] pdcd_user@pdcd_db STATEMENT:  Step 1: Snapshot table
+	CREATE TABLE IF NOT EXISTS pdcd_schema.snapshot_tbl (
+	    snapshot_id SERIAL PRIMARY KEY,  -- unique ID for each metadata snapshot
+	    snapshot_name TEXT NOT NULL,     -- descriptive name (e.g., 'daily_load_2025_10_30')
+	    snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()  -- when snapshot was captured
+	);
+2025-11-03 19:02:56.202 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.snapshot_tbl (
+	    snapshot_id SERIAL PRIMARY KEY,  -- unique ID for each metadata snapshot
+	    snapshot_name TEXT NOT NULL,     -- descriptive name (e.g., 'daily_load_2025_10_30')
+	    snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()  -- when snapshot was captured
+	);
+2025-11-03 19:03:05.252 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	    snapshot_id INT REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE, -- snapshot reference
+	    schema_name TEXT NOT NULL,              -- schema name
+	    object_type TEXT NOT NULL,              -- table / view / function etc.
+	    object_type_name TEXT NOT NULL,         -- name of the object
+	    object_subtype TEXT,                    -- e.g., column / index / trigger
+	    object_subtype_name TEXT,               -- specific subtype name
+	    object_subtype_details TEXT,            -- additional info or definition
+	    object_md5 TEXT NOT NULL,               -- MD5 hash of object definition
+	    processed_time TIMESTAMP DEFAULT clock_timestamp() -- record creation time
+	);
+2025-11-03 19:05:36.991 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:05:43.310 IST [54409] @ LOG:  checkpoint complete: wrote 61 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=6.263 s, sync=0.030 s, total=6.320 s; sync files=50, longest=0.006 s, average=0.001 s; distance=272 kB, estimate=1607 kB; lsn=0/5C8E66A8, redo lsn=0/5C8E6670
+2025-11-03 19:10:36.314 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:10:36.651 IST [54409] @ LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.315 s, sync=0.002 s, total=0.337 s; sync files=3, longest=0.001 s, average=0.001 s; distance=7 kB, estimate=1447 kB; lsn=0/5C8E8660, redo lsn=0/5C8E8628
+2025-11-03 19:18:38.926 IST [81433] pdcd_user@pdcd_db LOG:  statement: drop table pdcd_schema.md5_metadata_table, pdcd_schema.snapshot_tbl;
+2025-11-03 19:20:36.669 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:20:37.864 IST [54409] @ LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.152 s, sync=0.004 s, total=1.195 s; sync files=11, longest=0.002 s, average=0.001 s; distance=58 kB, estimate=1308 kB; lsn=0/5C8F7160, redo lsn=0/5C8F7128
+2025-11-03 19:31:16.233 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.snapshot_tbl (
+	  snapshot_id SERIAL PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-03 19:31:24.814 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED',   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	  prev_object_md5 TEXT                -- store previous md5 for reference (NULL for new)
+	);
+2025-11-03 19:31:40.573 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:31:45.667 IST [54409] @ LOG:  checkpoint complete: wrote 49 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=5.038 s, sync=0.036 s, total=5.095 s; sync files=45, longest=0.016 s, average=0.001 s; distance=220 kB, estimate=1199 kB; lsn=0/5C92E240, redo lsn=0/5C92E208
+2025-11-03 19:36:40.671 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:36:41.839 IST [54409] @ LOG:  checkpoint complete: wrote 12 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.139 s, sync=0.003 s, total=1.169 s; sync files=6, longest=0.002 s, average=0.001 s; distance=52 kB, estimate=1085 kB; lsn=0/5C93B418, redo lsn=0/5C93B3E0
+2025-11-03 19:42:44.992 IST [3114] bill_gates@test_db LOG:  statement: drop table analytics_schema.sales_data ;
+2025-11-03 19:42:44.992 IST [3114] bill_gates@test_db ERROR:  must be owner of table sales_data
+2025-11-03 19:42:44.992 IST [3114] bill_gates@test_db STATEMENT:  drop table analytics_schema.sales_data ;
+2025-11-03 19:42:55.561 IST [3114] bill_gates@test_db LOG:  disconnection: session time: 1:34:51.554 user=bill_gates database=test_db host=[local]
+2025-11-03 19:43:04.301 IST [9187] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 19:43:04.304 IST [9187] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db application_name=psql
+2025-11-03 19:43:08.598 IST [9187] jagdish_pandre@test_db LOG:  statement: drop table analytics_schema.sales_data ;
+2025-11-03 19:43:08.612 IST [9187] jagdish_pandre@test_db ERROR:  cannot drop table analytics_schema.sales_data because other objects depend on it
+2025-11-03 19:43:08.612 IST [9187] jagdish_pandre@test_db DETAIL:  materialized view analytics_schema.sales_summary depends on table analytics_schema.sales_data
+2025-11-03 19:43:08.612 IST [9187] jagdish_pandre@test_db HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2025-11-03 19:43:08.612 IST [9187] jagdish_pandre@test_db STATEMENT:  drop table analytics_schema.sales_data ;
+2025-11-03 19:43:37.706 IST [9187] jagdish_pandre@test_db LOG:  statement: drop schema analytics_schema cascade ;
+2025-11-03 19:43:47.180 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.employees (
+	    employee_id SERIAL PRIMARY KEY,
+	    first_name VARCHAR(50),
+	    last_name VARCHAR(50),
+	    department VARCHAR(50),
+	    salary NUMERIC(10,2),
+	    hire_date DATE DEFAULT CURRENT_DATE
+	);
+2025-11-03 19:43:47.180 IST [9187] jagdish_pandre@test_db ERROR:  schema "analytics_schema" does not exist at character 14
+2025-11-03 19:43:47.180 IST [9187] jagdish_pandre@test_db STATEMENT:  CREATE TABLE analytics_schema.employees (
+	    employee_id SERIAL PRIMARY KEY,
+	    first_name VARCHAR(50),
+	    last_name VARCHAR(50),
+	    department VARCHAR(50),
+	    salary NUMERIC(10,2),
+	    hire_date DATE DEFAULT CURRENT_DATE
+	);
+2025-11-03 19:44:04.131 IST [9187] jagdish_pandre@test_db LOG:  statement: create schema analytics_schema;
+2025-11-03 19:44:10.154 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.employees (
+	    employee_id SERIAL PRIMARY KEY,
+	    first_name VARCHAR(50),
+	    last_name VARCHAR(50),
+	    department VARCHAR(50),
+	    salary NUMERIC(10,2),
+	    hire_date DATE DEFAULT CURRENT_DATE
+	);
+2025-11-03 19:44:15.297 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE
+	);
+2025-11-03 19:44:21.929 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.employees (
+	    employee_id SERIAL PRIMARY KEY,
+	    first_name VARCHAR(50) NOT NULL,
+	    last_name VARCHAR(50),
+	    department_id INT REFERENCES analytics_schema.departments(department_id) ON DELETE SET NULL,
+	    salary NUMERIC(10,2),
+	    hire_date DATE DEFAULT CURRENT_DATE
+	);
+2025-11-03 19:44:21.933 IST [9187] jagdish_pandre@test_db ERROR:  relation "employees" already exists
+2025-11-03 19:44:21.933 IST [9187] jagdish_pandre@test_db STATEMENT:  CREATE TABLE analytics_schema.employees (
+	    employee_id SERIAL PRIMARY KEY,
+	    first_name VARCHAR(50) NOT NULL,
+	    last_name VARCHAR(50),
+	    department_id INT REFERENCES analytics_schema.departments(department_id) ON DELETE SET NULL,
+	    salary NUMERIC(10,2),
+	    hire_date DATE DEFAULT CURRENT_DATE
+	);
+2025-11-03 19:44:55.323 IST [9187] jagdish_pandre@test_db LOG:  statement: drop table analytics_schema.employees ;
+2025-11-03 19:46:40.838 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:46:46.220 IST [54409] @ LOG:  checkpoint complete: wrote 52 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=5.318 s, sync=0.025 s, total=5.383 s; sync files=45, longest=0.006 s, average=0.001 s; distance=231 kB, estimate=999 kB; lsn=0/5C975408, redo lsn=0/5C9753D0
+2025-11-03 19:48:57.152 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE EXTENSION IF NOT EXISTS postgres_fdw;
+2025-11-03 19:49:18.036 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE SERVER pdcd_server
+	  FOREIGN DATA WRAPPER postgres_fdw
+	  OPTIONS (host 'localhost', dbname 'pdcd_db', port '5432');
+2025-11-03 19:49:55.220 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE USER MAPPING FOR jagdish_pandre
+	  SERVER pdcd_server
+	  OPTIONS (user 'pdcd_user', password 'pdcd_pass');
+2025-11-03 19:51:40.224 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:51:43.981 IST [54409] @ LOG:  checkpoint complete: wrote 37 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.727 s, sync=0.007 s, total=3.757 s; sync files=26, longest=0.003 s, average=0.001 s; distance=96 kB, estimate=909 kB; lsn=0/5C98D4D8, redo lsn=0/5C98D4A0
+2025-11-03 19:54:17.920 IST [81433] pdcd_user@pdcd_db LOG:  statement: CREATE EXTENSION IF NOT EXISTS postgres_fdw;
+2025-11-03 19:54:17.962 IST [81433] pdcd_user@pdcd_db ERROR:  permission denied to create extension "postgres_fdw"
+2025-11-03 19:54:17.962 IST [81433] pdcd_user@pdcd_db HINT:  Must be superuser to create this extension.
+2025-11-03 19:54:17.962 IST [81433] pdcd_user@pdcd_db STATEMENT:  CREATE EXTENSION IF NOT EXISTS postgres_fdw;
+2025-11-03 19:54:31.636 IST [81433] pdcd_user@pdcd_db LOG:  disconnection: session time: 8:14:37.675 user=pdcd_user database=pdcd_db host=[local]
+2025-11-03 19:56:40.959 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 19:56:42.366 IST [54409] @ LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.384 s, sync=0.004 s, total=1.407 s; sync files=14, longest=0.002 s, average=0.001 s; distance=29 kB, estimate=821 kB; lsn=0/5C9948F8, redo lsn=0/5C9948C0
+2025-11-03 19:57:03.190 IST [10186] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 19:57:03.194 IST [10186] jagdish_pandre@pdcd_db LOG:  connection authorized: user=jagdish_pandre database=pdcd_db application_name=psql
+2025-11-03 19:58:02.067 IST [9187] jagdish_pandre@test_db LOG:  statement: drop schema analytics_schema;
+2025-11-03 19:58:02.068 IST [9187] jagdish_pandre@test_db ERROR:  cannot drop schema analytics_schema because other objects depend on it
+2025-11-03 19:58:02.068 IST [9187] jagdish_pandre@test_db DETAIL:  table analytics_schema.departments depends on schema analytics_schema
+2025-11-03 19:58:02.068 IST [9187] jagdish_pandre@test_db HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2025-11-03 19:58:02.068 IST [9187] jagdish_pandre@test_db STATEMENT:  drop schema analytics_schema;
+2025-11-03 19:58:12.087 IST [9187] jagdish_pandre@test_db LOG:  statement: drop schema analytics_schema cascade;
+2025-11-03 19:59:08.896 IST [9187] jagdish_pandre@test_db LOG:  statement: create schema pdcd_schema;
+2025-11-03 19:59:48.729 IST [9187] jagdish_pandre@test_db ERROR:  syntax error at or near "CREATE" at character 8
+2025-11-03 19:59:48.729 IST [9187] jagdish_pandre@test_db STATEMENT:  create CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE
+	);
+2025-11-03 20:00:00.854 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE
+	);
+2025-11-03 20:00:00.854 IST [9187] jagdish_pandre@test_db ERROR:  schema "analytics_schema" does not exist at character 14
+2025-11-03 20:00:00.854 IST [9187] jagdish_pandre@test_db STATEMENT:  CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE
+	);
+2025-11-03 20:00:22.899 IST [9187] jagdish_pandre@test_db LOG:  statement: create schema analytics_schema;
+2025-11-03 20:00:28.851 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE
+	);
+2025-11-03 20:00:34.693 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.employees (
+	    employee_id SERIAL PRIMARY KEY,
+	    first_name VARCHAR(50) NOT NULL,
+	    last_name VARCHAR(50),
+	    department_id INT REFERENCES analytics_schema.departments(department_id) ON DELETE SET NULL,
+	    salary NUMERIC(10,2),
+	    hire_date DATE DEFAULT CURRENT_DATE
+	);
+2025-11-03 20:01:40.371 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 20:01:45.714 IST [54409] @ LOG:  checkpoint complete: wrote 52 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=5.291 s, sync=0.025 s, total=5.343 s; sync files=45, longest=0.006 s, average=0.001 s; distance=196 kB, estimate=758 kB; lsn=0/5C9C5A60, redo lsn=0/5C9C5A28
+2025-11-03 20:02:38.378 IST [10186] jagdish_pandre@pdcd_db LOG:  disconnection: session time: 0:05:35.187 user=jagdish_pandre database=pdcd_db host=[local]
+2025-11-03 20:02:57.505 IST [10599] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 20:02:57.508 IST [10599] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db application_name=psql
+2025-11-03 20:03:49.490 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.snapshot_tbl (
+	  snapshot_id SERIAL PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-03 20:03:58.874 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED',   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	  prev_object_md5 TEXT                -- store previous md5 for reference (NULL for new)
+	);
+2025-11-03 20:04:09.867 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_snapshot ON pdcd_schema.md5_metadata_table(snapshot_id);
+2025-11-03 20:04:09.871 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_obj ON pdcd_schema.md5_metadata_table(schema_name, object_type, object_type_name, object_subtype, object_subtype_name, object_md5);
+2025-11-03 20:04:09.876 IST [9187] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_lookup ON pdcd_schema.md5_metadata_table(schema_name, object_type, object_type_name, object_subtype, object_subtype_name);
+2025-11-03 20:06:40.717 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 20:06:45.732 IST [54409] @ LOG:  checkpoint complete: wrote 48 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.953 s, sync=0.041 s, total=5.016 s; sync files=48, longest=0.005 s, average=0.001 s; distance=205 kB, estimate=703 kB; lsn=0/5C9F8F70, redo lsn=0/5C9F8F38
+2025-11-03 21:20:12.038 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near "dn" at character 1
+2025-11-03 21:20:12.038 IST [10599] jagdish_pandre@test_db STATEMENT:  dn
+	INSERT INTO pdcd_schema.snapshot_tbl(snapshot_name)
+	VALUES ('baseline_YYYYMMDD') RETURNING snapshot_id;
+2025-11-03 21:20:37.327 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata ON COMMIT DROP AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'sales' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:20:56.102 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near "temp" at character 6
+2025-11-03 21:20:56.102 IST [10599] jagdish_pandre@test_db STATEMENT:  drop temp table tmp_md5_metadata;
+2025-11-03 21:21:02.179 IST [10599] jagdish_pandre@test_db LOG:  statement: drop table tmp_md5_metadata;
+2025-11-03 21:21:02.180 IST [10599] jagdish_pandre@test_db ERROR:  table "tmp_md5_metadata" does not exist
+2025-11-03 21:21:02.180 IST [10599] jagdish_pandre@test_db STATEMENT:  drop table tmp_md5_metadata;
+2025-11-03 21:21:37.358 IST [10599] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS tmp_md5_metadata;
+2025-11-03 21:22:09.291 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 21:22:12.680 IST [54409] @ LOG:  checkpoint complete: wrote 33 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.356 s, sync=0.005 s, total=3.390 s; sync files=26, longest=0.002 s, average=0.001 s; distance=143 kB, estimate=647 kB; lsn=0/5CA1CB98, redo lsn=0/5CA1CB60
+2025-11-03 21:22:40.592 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near "temp" at character 6
+2025-11-03 21:22:40.592 IST [10599] jagdish_pandre@test_db STATEMENT:  drop temp table tmp_md5_metadata;
+2025-11-03 21:22:40.592 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE pdcd_schema.tmp_md5_metadata ON COMMIT DROP AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:22:40.597 IST [10599] jagdish_pandre@test_db ERROR:  cannot create temporary relation in non-temporary schema
+2025-11-03 21:22:40.597 IST [10599] jagdish_pandre@test_db STATEMENT:  CREATE TEMP TABLE pdcd_schema.tmp_md5_metadata ON COMMIT DROP AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:22:44.824 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE pdcd_schema.tmp_md5_metadata ON COMMIT DROP AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:22:44.832 IST [10599] jagdish_pandre@test_db ERROR:  cannot create temporary relation in non-temporary schema
+2025-11-03 21:22:44.832 IST [10599] jagdish_pandre@test_db STATEMENT:  CREATE TEMP TABLE pdcd_schema.tmp_md5_metadata ON COMMIT DROP AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:23:31.320 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata ON COMMIT DROP AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:23:40.328 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near ":" at character 224
+2025-11-03 21:23:40.328 IST [10599] jagdish_pandre@test_db STATEMENT:  INSERT INTO pdcd_schema.md5_metadata_table (
+	  snapshot_id,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, change_type, prev_object_md5
+	)
+	SELECT
+	  :new_snapshot_id,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, 'ADDED', NULL
+	FROM tmp_md5_metadata;
+2025-11-03 21:24:19.149 IST [10599] jagdish_pandre@test_db ERROR:  relation "tmp_md5_metadata" does not exist at character 390
+2025-11-03 21:24:19.149 IST [10599] jagdish_pandre@test_db STATEMENT:  INSERT INTO pdcd_schema.md5_metadata_table (
+	  snapshot_id,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, change_type, prev_object_md5
+	)
+	SELECT
+	  1 /*:new_snapshot_id*/,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, 'ADDED', NULL
+	FROM tmp_md5_metadata;
+2025-11-03 21:25:33.084 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata ON COMMIT DROP AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:25:33.118 IST [10599] jagdish_pandre@test_db ERROR:  relation "tmp_md5_metadata" does not exist at character 390
+2025-11-03 21:25:33.118 IST [10599] jagdish_pandre@test_db STATEMENT:  INSERT INTO pdcd_schema.md5_metadata_table (
+	  snapshot_id,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, change_type, prev_object_md5
+	)
+	SELECT
+	  1 /*:new_snapshot_id*/,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, 'ADDED', NULL
+	FROM tmp_md5_metadata;
+2025-11-03 21:26:37.034 IST [10599] jagdish_pandre@test_db ERROR:  cannot truncate a table referenced in a foreign key constraint
+2025-11-03 21:26:37.034 IST [10599] jagdish_pandre@test_db DETAIL:  Table "md5_metadata_table" references "snapshot_tbl".
+2025-11-03 21:26:37.034 IST [10599] jagdish_pandre@test_db HINT:  Truncate table "md5_metadata_table" at the same time, or use TRUNCATE ... CASCADE.
+2025-11-03 21:26:37.034 IST [10599] jagdish_pandre@test_db STATEMENT:  truncate table pdcd_schema.snapshot_tbl;
+2025-11-03 21:27:09.682 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 21:27:14.336 IST [54409] @ LOG:  checkpoint complete: wrote 45 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.574 s, sync=0.045 s, total=4.654 s; sync files=40, longest=0.006 s, average=0.002 s; distance=233 kB, estimate=606 kB; lsn=0/5CA570A0, redo lsn=0/5CA57068
+2025-11-03 21:27:48.180 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata ON COMMIT DROP AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:27:48.216 IST [10599] jagdish_pandre@test_db ERROR:  relation "tmp_md5_metadata" does not exist at character 390
+2025-11-03 21:27:48.216 IST [10599] jagdish_pandre@test_db STATEMENT:  INSERT INTO pdcd_schema.md5_metadata_table (
+	  snapshot_id,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, change_type, prev_object_md5
+	)
+	SELECT
+	  1 /*:new_snapshot_id*/,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, 'ADDED', NULL
+	FROM tmp_md5_metadata;
+2025-11-03 21:29:35.447 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:29:48.962 IST [10599] jagdish_pandre@test_db ERROR:  insert or update on table "md5_metadata_table" violates foreign key constraint "md5_metadata_table_snapshot_id_fkey"
+2025-11-03 21:29:48.962 IST [10599] jagdish_pandre@test_db DETAIL:  Key (snapshot_id)=(1) is not present in table "snapshot_tbl".
+2025-11-03 21:29:48.962 IST [10599] jagdish_pandre@test_db STATEMENT:  INSERT INTO pdcd_schema.md5_metadata_table (
+	  snapshot_id,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, change_type, prev_object_md5
+	)
+	SELECT
+	  1 /*:new_snapshot_id*/,
+	  schema_name, object_type, object_type_name,
+	  object_subtype, object_subtype_name,
+	  object_subtype_details, object_md5, 'ADDED', NULL
+	FROM tmp_md5_metadata;
+2025-11-03 21:30:15.809 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near "selecct" at character 1
+2025-11-03 21:30:15.809 IST [10599] jagdish_pandre@test_db STATEMENT:  selecct * from pdcd_schema.snapshot_tbl
+	select count(*) from pdcd_schema.snapshot_tbl;
+2025-11-03 21:31:56.977 IST [10599] jagdish_pandre@test_db LOG:  statement: drop table analytics_schema.employees ;
+2025-11-03 21:32:09.326 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 21:32:14.198 IST [10599] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.md5_metadata_table ;
+2025-11-03 21:32:15.745 IST [54409] @ LOG:  checkpoint complete: wrote 53 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=6.379 s, sync=0.012 s, total=6.420 s; sync files=34, longest=0.003 s, average=0.001 s; distance=324 kB, estimate=577 kB; lsn=0/5CAB8758, redo lsn=0/5CAA8288
+2025-11-03 21:32:22.377 IST [10599] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.snapshot_tbl ;
+2025-11-03 21:32:41.537 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.snapshot_tbl (
+	  snapshot_id SERIAL PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-03 21:32:50.137 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED',   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	  prev_object_md5 TEXT                -- store previous md5 for reference (NULL for new)
+	);
+2025-11-03 21:33:06.758 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_snapshot ON pdcd_schema.md5_metadata_table(snapshot_id);
+2025-11-03 21:33:06.767 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_obj ON pdcd_schema.md5_metadata_table(schema_name, object_type, object_type_name, object_subtype, object_subtype_name, object_md5);
+2025-11-03 21:33:06.773 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_lookup ON pdcd_schema.md5_metadata_table(schema_name, object_type, object_type_name, object_subtype, object_subtype_name);
+2025-11-03 21:34:35.903 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near "l" at character 43
+2025-11-03 21:34:35.903 IST [10599] jagdish_pandre@test_db STATEMENT:  drop table pdcd_schema.md5_metadata_table l
+	;
+2025-11-03 21:34:39.788 IST [10599] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.md5_metadata_table;
+2025-11-03 21:34:46.828 IST [10599] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.snapshot_tbl;
+2025-11-03 21:34:54.540 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-03 21:35:02.610 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED',   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	  prev_object_md5 TEXT                -- store previous md5 for reference (NULL for new)
+	);
+2025-11-03 21:35:09.359 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_snapshot ON pdcd_schema.md5_metadata_table(snapshot_id);
+2025-11-03 21:35:09.366 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_obj ON pdcd_schema.md5_metadata_table(schema_name, object_type, object_type_name, object_subtype, object_subtype_name, object_md5);
+2025-11-03 21:35:09.370 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_lookup ON pdcd_schema.md5_metadata_table(schema_name, object_type, object_type_name, object_subtype, object_subtype_name);
+2025-11-03 21:36:30.140 IST [10599] jagdish_pandre@test_db ERROR:  cannot truncate a table referenced in a foreign key constraint
+2025-11-03 21:36:30.140 IST [10599] jagdish_pandre@test_db DETAIL:  Table "md5_metadata_table" references "snapshot_tbl".
+2025-11-03 21:36:30.140 IST [10599] jagdish_pandre@test_db HINT:  Truncate table "md5_metadata_table" at the same time, or use TRUNCATE ... CASCADE.
+2025-11-03 21:36:30.140 IST [10599] jagdish_pandre@test_db STATEMENT:  truncate pdcd_schema.snapshot_tbl;
+2025-11-03 21:37:09.746 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 21:37:17.098 IST [54409] @ LOG:  checkpoint complete: wrote 70 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=7.171 s, sync=0.087 s, total=7.353 s; sync files=76, longest=0.006 s, average=0.002 s; distance=420 kB, estimate=562 kB; lsn=0/5CB11400, redo lsn=0/5CB113C8
+2025-11-03 21:38:46.229 IST [10599] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.md5_metadata_table ;
+2025-11-03 21:38:56.784 IST [10599] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.snapshot_tbl ;
+2025-11-03 21:39:04.799 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near "AUTO_INCREMENT" at character 59
+2025-11-03 21:39:04.799 IST [10599] jagdish_pandre@test_db STATEMENT:  CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT AUTO_INCREMENT PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-03 21:39:50.837 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near "AUTO_INCREMENT" at character 59
+2025-11-03 21:39:50.837 IST [10599] jagdish_pandre@test_db STATEMENT:  CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT AUTO_INCREMENT PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-03 21:40:29.322 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED',   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	  prev_object_md5 TEXT                -- store previous md5 for reference (NULL for new)
+	);
+2025-11-03 21:40:29.373 IST [10599] jagdish_pandre@test_db ERROR:  relation "pdcd_schema.snapshot_tbl" does not exist
+2025-11-03 21:40:29.373 IST [10599] jagdish_pandre@test_db STATEMENT:  CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED',   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	  prev_object_md5 TEXT                -- store previous md5 for reference (NULL for new)
+	);
+2025-11-03 21:40:48.147 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-03 21:40:56.271 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED',   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	  prev_object_md5 TEXT                -- store previous md5 for reference (NULL for new)
+	);
+2025-11-03 21:41:05.230 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_snapshot ON pdcd_schema.md5_metadata_table(snapshot_id);
+2025-11-03 21:41:05.251 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_obj ON pdcd_schema.md5_metadata_table(schema_name, object_type, object_type_name, object_subtype, object_subtype_name, object_md5);
+2025-11-03 21:41:05.254 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE INDEX IF NOT EXISTS idx_md5_lookup ON pdcd_schema.md5_metadata_table(schema_name, object_type, object_type_name, object_subtype, object_subtype_name);
+2025-11-03 21:41:20.657 IST [10599] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:41:20.658 IST [10599] jagdish_pandre@test_db ERROR:  relation "tmp_md5_metadata" already exists
+2025-11-03 21:41:20.658 IST [10599] jagdish_pandre@test_db STATEMENT:  CREATE TEMP TABLE tmp_md5_metadata AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:42:09.102 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 21:42:16.880 IST [54409] @ LOG:  checkpoint complete: wrote 75 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=7.672 s, sync=0.056 s, total=7.779 s; sync files=57, longest=0.006 s, average=0.001 s; distance=423 kB, estimate=548 kB; lsn=0/5CB7B170, redo lsn=0/5CB7B138
+2025-11-03 21:44:24.150 IST [10599] jagdish_pandre@test_db ERROR:  syntax error at or near "truncata" at character 1
+2025-11-03 21:44:24.150 IST [10599] jagdish_pandre@test_db STATEMENT:  truncata table pdcd_schema.md5_metadata_table ;
+2025-11-03 21:45:36.696 IST [10599] jagdish_pandre@test_db ERROR:  cannot truncate a table referenced in a foreign key constraint
+2025-11-03 21:45:36.696 IST [10599] jagdish_pandre@test_db DETAIL:  Table "md5_metadata_table" references "snapshot_tbl".
+2025-11-03 21:45:36.696 IST [10599] jagdish_pandre@test_db HINT:  Truncate table "md5_metadata_table" at the same time, or use TRUNCATE ... CASCADE.
+2025-11-03 21:45:36.696 IST [10599] jagdish_pandre@test_db STATEMENT:  TRUNCATE TABLE pdcd_schema.snapshot_tbl RESTART IDENTITY;
+2025-11-03 21:45:51.437 IST [10599] jagdish_pandre@test_db ERROR:  cannot truncate a table referenced in a foreign key constraint
+2025-11-03 21:45:51.437 IST [10599] jagdish_pandre@test_db DETAIL:  Table "md5_metadata_table" references "snapshot_tbl".
+2025-11-03 21:45:51.437 IST [10599] jagdish_pandre@test_db HINT:  Truncate table "md5_metadata_table" at the same time, or use TRUNCATE ... CASCADE.
+2025-11-03 21:45:51.437 IST [10599] jagdish_pandre@test_db STATEMENT:  TRUNCATE TABLE pdcd_schema.snapshot_tbl RESTART IDENTITY;
+2025-11-03 21:46:05.503 IST [9187] jagdish_pandre@test_db ERROR:  syntax error at or near "RESTART" at character 49
+2025-11-03 21:46:05.503 IST [9187] jagdish_pandre@test_db STATEMENT:  TRUNCATE TABLE pdcd_schema.snapshot_tbl CASCADE RESTART IDENTITY;
+2025-11-03 21:47:02.783 IST [9187] jagdish_pandre@test_db LOG:  disconnection: session time: 2:03:58.482 user=jagdish_pandre database=test_db host=[local]
+2025-11-03 21:47:09.891 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 21:47:15.183 IST [54409] @ LOG:  checkpoint complete: wrote 51 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=5.126 s, sync=0.087 s, total=5.293 s; sync files=61, longest=0.006 s, average=0.002 s; distance=197 kB, estimate=513 kB; lsn=0/5CBAC880, redo lsn=0/5CBAC848
+2025-11-03 21:47:25.420 IST [14443] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-11-03 21:47:25.423 IST [14443] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db application_name=psql
+2025-11-03 21:49:21.499 IST [14443] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:51:11.139 IST [14443] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS tmp_md5_metadata;
+2025-11-03 21:51:11.152 IST [14443] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 21:52:09.185 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 21:52:13.275 IST [54409] @ LOG:  checkpoint complete: wrote 40 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.059 s, sync=0.008 s, total=4.091 s; sync files=29, longest=0.003 s, average=0.001 s; distance=137 kB, estimate=475 kB; lsn=0/5CBCF028, redo lsn=0/5CBCEFF0
+2025-11-03 21:55:49.848 IST [10599] jagdish_pandre@test_db LOG:  disconnection: session time: 1:52:52.343 user=jagdish_pandre database=test_db host=[local]
+2025-11-03 21:57:09.277 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 21:57:11.198 IST [54409] @ LOG:  checkpoint complete: wrote 19 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.898 s, sync=0.006 s, total=1.922 s; sync files=14, longest=0.003 s, average=0.001 s; distance=42 kB, estimate=432 kB; lsn=0/5CBD9B60, redo lsn=0/5CBD9B28
+2025-11-03 22:00:10.465 IST [14443] jagdish_pandre@test_db LOG:  statement: ALTER TABLE analytics_schema.departments
+	    ADD COLUMN primary_location VARCHAR(100);
+2025-11-03 22:00:10.467 IST [14443] jagdish_pandre@test_db LOG:  statement: ALTER TABLE analytics_schema.departments
+	    RENAME COLUMN department_name TO dept_name;
+2025-11-03 22:01:39.808 IST [14443] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS tmp_md5_metadata;
+2025-11-03 22:01:39.821 IST [14443] jagdish_pandre@test_db LOG:  statement: CREATE TEMP TABLE tmp_md5_metadata AS
+	SELECT
+	  schema_name,
+	  object_type,
+	  object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details,
+	  md5(object_subtype_details) AS object_md5
+	FROM (
+	  -- Replace this subquery with your exact metadata generation logic:
+	  SELECT
+	    c.table_schema AS schema_name,
+	    'Table' AS object_type,
+	    c.table_name AS object_type_name,
+	    'Column' AS object_subtype,
+	    c.column_name AS object_subtype_name,
+	    -- compose details string exactly as you used previously:
+	    ('data_type:' || COALESCE(c.data_type,'') || ',is_nullable:' || COALESCE(c.is_nullable,'') ||
+	      ',column_default:' || COALESCE(c.column_default,'') || ',character_maximum_length:' || COALESCE(c.character_maximum_length::TEXT,'') ||
+	      ',ordinal_position:' || c.ordinal_position::TEXT) AS object_subtype_details
+	  FROM information_schema.columns c
+	  WHERE c.table_schema = 'analytics_schema' -- or other filter; use all schemas if needed
+	) s;
+2025-11-03 22:02:09.194 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 22:02:11.945 IST [54409] @ LOG:  checkpoint complete: wrote 27 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.723 s, sync=0.006 s, total=2.751 s; sync files=20, longest=0.002 s, average=0.001 s; distance=134 kB, estimate=402 kB; lsn=0/5CBFB3E8, redo lsn=0/5CBFB3B0
+2025-11-03 22:20:30.493 IST [14443] jagdish_pandre@test_db ERROR:  syntax error at or near "test_db" at character 1
+2025-11-03 22:20:30.493 IST [14443] jagdish_pandre@test_db STATEMENT:  test_db=# select * from tmp_md5_metadata ;
+2025-11-03 22:52:09.996 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 22:52:10.959 IST [54409] @ LOG:  checkpoint complete: wrote 9 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.935 s, sync=0.002 s, total=0.964 s; sync files=4, longest=0.001 s, average=0.001 s; distance=15 kB, estimate=363 kB; lsn=0/5CBFF000, redo lsn=0/5CBFEFC8
+2025-11-03 22:52:22.541 IST [14443] jagdish_pandre@test_db LOG:  statement: DROP TABLE tmp_md5_metadata;
+2025-11-03 22:52:40.181 IST [14443] jagdish_pandre@test_db ERROR:  syntax error at or near "RESTART" at character 49
+2025-11-03 22:52:40.181 IST [14443] jagdish_pandre@test_db STATEMENT:  TRUNCATE TABLE pdcd_schema.snapshot_tbl CASCADE RESTART IDENTITY;
+2025-11-03 22:52:50.258 IST [14443] jagdish_pandre@test_db ERROR:  syntax error at or near "RESTART" at character 49
+2025-11-03 22:52:50.258 IST [14443] jagdish_pandre@test_db STATEMENT:  TRUNCATE TABLE pdcd_schema.snapshot_tbl CASCADE RESTART IDENTITY;
+2025-11-03 22:53:29.135 IST [14443] jagdish_pandre@test_db ERROR:  schema "pdcd" does not exist
+2025-11-03 22:53:29.135 IST [14443] jagdish_pandre@test_db STATEMENT:  TRUNCATE TABLE pdcd.snapshot_table RESTART IDENTITY CASCADE;
+2025-11-03 22:54:10.962 IST [14443] jagdish_pandre@test_db ERROR:  relation "pdcd_schema.snapshot_table" does not exist
+2025-11-03 22:54:10.962 IST [14443] jagdish_pandre@test_db STATEMENT:  TRUNCATE TABLE pdcd_schema.snapshot_table RESTART IDENTITY CASCADE;
+2025-11-03 23:19:02.622 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-03 23:19:05.137 IST [54409] @ LOG:  checkpoint complete: wrote 24 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.411 s, sync=0.047 s, total=2.515 s; sync files=34, longest=0.005 s, average=0.002 s; distance=115 kB, estimate=339 kB; lsn=0/5CC1BEE8, redo lsn=0/5CC1BEB0

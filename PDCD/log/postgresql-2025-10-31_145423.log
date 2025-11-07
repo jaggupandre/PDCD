@@ -1,0 +1,43 @@
+2025-10-31 14:54:23.009 IST [54406] @ LOG:  starting PostgreSQL 16.10 (Homebrew) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 16.0.0 (clang-1600.0.26.6), 64-bit
+2025-10-31 14:54:23.011 IST [54406] @ LOG:  listening on IPv6 address "::1", port 5432
+2025-10-31 14:54:23.011 IST [54406] @ LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-10-31 14:54:23.013 IST [54406] @ LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2025-10-31 14:54:23.039 IST [54411] @ LOG:  database system was shut down at 2025-10-31 14:54:21 IST
+2025-10-31 14:54:23.069 IST [54406] @ LOG:  database system is ready to accept connections
+2025-10-31 14:54:33.470 IST [54427] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-10-31 14:54:33.474 IST [54427] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db application_name=psql
+2025-10-31 15:01:34.835 IST [54409] @ LOG:  checkpoint starting: time
+2025-10-31 15:01:34.976 IST [54409] @ LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.112 s, sync=0.012 s, total=0.142 s; sync files=3, longest=0.006 s, average=0.004 s; distance=0 kB, estimate=0 kB; lsn=0/5C372D10, redo lsn=0/5C372CD8
+2025-10-31 15:22:21.667 IST [54427] jagdish_pandre@test_db LOG:  statement: ALTER TABLE analytics_schema.sales_data ADD COLUMN log_check_col_0 TEXT;
+2025-10-31 15:22:49.430 IST [54409] @ LOG:  checkpoint starting: time
+2025-10-31 15:22:49.883 IST [54409] @ LOG:  checkpoint complete: wrote 5 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.422 s, sync=0.010 s, total=0.453 s; sync files=5, longest=0.009 s, average=0.002 s; distance=20 kB, estimate=20 kB; lsn=0/5C377EF8, redo lsn=0/5C377EC0
+2025-10-31 19:43:21.662 IST [54427] jagdish_pandre@test_db ERROR:  column "current_database" does not exist at character 8
+2025-10-31 19:43:21.662 IST [54427] jagdish_pandre@test_db STATEMENT:  select current_database;
+2025-10-31 19:43:34.775 IST [66692] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-10-31 19:43:34.781 IST [66692] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres application_name=psql
+2025-10-31 19:43:34.792 IST [54427] jagdish_pandre@test_db LOG:  disconnection: session time: 4:49:01.322 user=jagdish_pandre database=test_db host=[local]
+2025-10-31 19:44:50.499 IST [66692] jagdish_pandre@postgres LOG:  statement: CREATE USER pdcd_user WITH PASSWORD 'pdcd_pass';
+2025-10-31 19:44:57.500 IST [66692] jagdish_pandre@postgres LOG:  statement: CREATE DATABASE pdcd_db OWNER pdcd_user;
+2025-10-31 19:45:05.823 IST [66692] jagdish_pandre@postgres LOG:  statement: GRANT ALL PRIVILEGES ON DATABASE pdcd_db TO pdcd_user;
+2025-10-31 19:46:03.456 IST [54409] @ LOG:  checkpoint starting: time
+2025-10-31 19:46:52.912 IST [66932] [unknown]@[unknown] LOG:  connection received: host=[local]
+2025-10-31 19:46:52.917 IST [66932] jagdish_pandre@pdcd_db LOG:  connection authorized: user=jagdish_pandre database=pdcd_db application_name=psql
+2025-10-31 19:46:52.948 IST [66692] jagdish_pandre@postgres LOG:  disconnection: session time: 0:03:18.173 user=jagdish_pandre database=postgres host=[local]
+2025-10-31 19:47:05.933 IST [66932] jagdish_pandre@pdcd_db LOG:  statement: GRANT ALL PRIVILEGES ON DATABASE pdcd_db TO pdcd_user;
+2025-10-31 19:47:10.452 IST [66932] jagdish_pandre@pdcd_db LOG:  statement: GRANT CREATE, CONNECT, TEMP ON DATABASE pdcd_db TO pdcd_user;
+2025-10-31 19:47:15.573 IST [66932] jagdish_pandre@pdcd_db LOG:  statement: ALTER SCHEMA public OWNER TO pdcd_user;
+2025-10-31 19:47:34.557 IST [66932] jagdish_pandre@pdcd_db LOG:  statement: ALTER DEFAULT PRIVILEGES IN SCHEMA public
+	GRANT ALL ON TABLES TO pdcd_user;
+2025-10-31 19:47:34.571 IST [66932] jagdish_pandre@pdcd_db LOG:  statement: ALTER DEFAULT PRIVILEGES IN SCHEMA public
+	GRANT ALL ON SEQUENCES TO pdcd_user;
+2025-10-31 19:47:34.572 IST [66932] jagdish_pandre@pdcd_db LOG:  statement: ALTER DEFAULT PRIVILEGES IN SCHEMA public
+	GRANT ALL ON FUNCTIONS TO pdcd_user;
+2025-10-31 19:47:34.572 IST [66932] jagdish_pandre@pdcd_db LOG:  statement: ALTER DEFAULT PRIVILEGES IN SCHEMA public
+	GRANT ALL ON TYPES TO pdcd_user;
+2025-10-31 19:47:40.713 IST [54409] @ LOG:  checkpoint complete: wrote 946 buffers (5.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=97.014 s, sync=0.218 s, total=97.257 s; sync files=310, longest=0.005 s, average=0.001 s; distance=4354 kB, estimate=4354 kB; lsn=0/5C7C0A30, redo lsn=0/5C7B8A78
+2025-10-31 19:48:19.260 IST [66932] jagdish_pandre@pdcd_db LOG:  statement: CREATE TABLE test_table (id INT);
+2025-10-31 19:51:03.737 IST [54409] @ LOG:  checkpoint starting: time
+2025-10-31 19:51:07.407 IST [54409] @ LOG:  checkpoint complete: wrote 36 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.634 s, sync=0.013 s, total=3.671 s; sync files=30, longest=0.007 s, average=0.001 s; distance=113 kB, estimate=3930 kB; lsn=0/5C7D5100, redo lsn=0/5C7D50C8
+2025-11-03 00:29:39.789 IST [66932] jagdish_pandre@pdcd_db ERROR:  function currrent_database() does not exist at character 8
+2025-11-03 00:29:39.789 IST [66932] jagdish_pandre@pdcd_db HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+2025-11-03 00:29:39.789 IST [66932] jagdish_pandre@pdcd_db STATEMENT:  select currrent_database();

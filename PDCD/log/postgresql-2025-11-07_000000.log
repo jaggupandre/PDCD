@@ -1,0 +1,1044 @@
+2025-11-07 08:46:48.207 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE
+	);
+2025-11-07 08:50:14.269 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_staging_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- Step 1: Truncate before load
+	    TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl;
+	
+	    -- Step 2: Generate and load snapshot data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.processed_time AS processed_time
+	        FROM pdcd_schema.snapshot_tbl AS s
+	    ),
+	    combined_data AS (
+	        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        -- UNION ALL 
+	        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        -- UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_staging_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.md5_metadata_staging_tbl.metadata_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.snapshot_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.schema_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_details, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp()::timestamp AS processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-07 08:50:38.167 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 08:50:46.470 IST [54409] @ LOG:  checkpoint complete: wrote 79 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=8.132 s, sync=0.073 s, total=8.305 s; sync files=84, longest=0.006 s, average=0.001 s; distance=369 kB, estimate=369 kB; lsn=0/5D641F78, redo lsn=0/5D641F40
+2025-11-07 08:50:59.658 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add location TEXT;
+2025-11-07 08:53:23.639 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add primary_location TEXT;
+2025-11-07 08:53:31.864 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add secondary_location TEXT;
+2025-11-07 08:53:40.388 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add ternary_location TEXT;
+2025-11-07 08:53:54.116 IST [52582] jagdish_pandre@test_db ERROR:  cannot truncate a table referenced in a foreign key constraint
+2025-11-07 08:53:54.116 IST [52582] jagdish_pandre@test_db DETAIL:  Table "md5_metadata_tbl" references "snapshot_tbl".
+2025-11-07 08:53:54.116 IST [52582] jagdish_pandre@test_db HINT:  Truncate table "md5_metadata_tbl" at the same time, or use TRUNCATE ... CASCADE.
+2025-11-07 08:53:54.116 IST [52582] jagdish_pandre@test_db STATEMENT:  truncate pdcd_schema.snapshot_tbl ;
+2025-11-07 08:55:38.474 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 08:55:42.552 IST [54409] @ LOG:  checkpoint complete: wrote 39 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.945 s, sync=0.067 s, total=4.079 s; sync files=51, longest=0.006 s, average=0.002 s; distance=173 kB, estimate=349 kB; lsn=0/5D66D3C0, redo lsn=0/5D66D388
+2025-11-07 09:00:38.554 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 09:00:40.102 IST [54409] @ LOG:  checkpoint complete: wrote 15 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.471 s, sync=0.030 s, total=1.549 s; sync files=22, longest=0.006 s, average=0.002 s; distance=37 kB, estimate=318 kB; lsn=0/5D676A90, redo lsn=0/5D676A58
+2025-11-07 09:01:40.098 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments rename column location to location_old;
+2025-11-07 09:01:40.101 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column ternary_location;
+2025-11-07 09:01:40.102 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add column location_new TEXT;
+2025-11-07 09:05:38.105 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 09:05:39.498 IST [54409] @ LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.368 s, sync=0.004 s, total=1.394 s; sync files=12, longest=0.002 s, average=0.001 s; distance=34 kB, estimate=290 kB; lsn=0/5D67F4F0, redo lsn=0/5D67F4B8
+2025-11-07 09:07:59.825 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP table IF EXISTS analytics_schema.departments;
+2025-11-07 09:08:08.052 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE
+	);
+2025-11-07 09:09:57.004 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP,
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) as snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	    combined_data AS (
+	        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        -- UNION ALL 
+	        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        -- UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5,
+	            change_type
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5,
+	            'ADDED'
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-07 09:10:38.500 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 09:10:41.892 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments rename column location to location_old;
+2025-11-07 09:10:41.894 IST [52582] jagdish_pandre@test_db ERROR:  column "location" does not exist
+2025-11-07 09:10:41.894 IST [52582] jagdish_pandre@test_db STATEMENT:  alter table analytics_schema.departments rename column location to location_old;
+2025-11-07 09:10:41.894 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column ternary_location;
+2025-11-07 09:10:41.894 IST [52582] jagdish_pandre@test_db ERROR:  column "ternary_location" of relation "departments" does not exist
+2025-11-07 09:10:41.894 IST [52582] jagdish_pandre@test_db STATEMENT:  alter table analytics_schema.departments drop column ternary_location;
+2025-11-07 09:10:41.895 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add column location_new TEXT;
+2025-11-07 09:10:46.737 IST [54409] @ LOG:  checkpoint complete: wrote 79 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=8.063 s, sync=0.080 s, total=8.239 s; sync files=90, longest=0.005 s, average=0.001 s; distance=402 kB, estimate=402 kB; lsn=0/5D6F62D0, redo lsn=0/5D6E3DF8
+2025-11-07 09:12:59.758 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP table IF EXISTS analytics_schema.departments;
+2025-11-07 09:13:37.151 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE,
+	    location VARCHAR(100),
+	    primary_location VARCHAR(100),
+	    secondary_location VARCHAR(100),
+	    ternary_location VARCHAR(100)
+	);
+2025-11-07 09:15:01.691 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments rename column location to location_old;
+2025-11-07 09:15:01.693 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column ternary_location;
+2025-11-07 09:15:01.694 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add column location_new TEXT;
+2025-11-07 09:15:38.740 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 09:15:45.623 IST [54409] @ LOG:  checkpoint complete: wrote 66 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=6.753 s, sync=0.058 s, total=6.884 s; sync files=67, longest=0.006 s, average=0.001 s; distance=278 kB, estimate=389 kB; lsn=0/5D729870, redo lsn=0/5D729838
+2025-11-07 09:18:32.135 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP table IF EXISTS analytics_schema.departments;
+2025-11-07 09:38:30.259 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 09:38:32.176 IST [54409] @ LOG:  checkpoint complete: wrote 18 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.798 s, sync=0.050 s, total=1.919 s; sync files=37, longest=0.005 s, average=0.002 s; distance=99 kB, estimate=360 kB; lsn=0/5D742760, redo lsn=0/5D742728
+2025-11-07 10:44:50.733 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE analytics_schema.departments (
+	    department_id SERIAL PRIMARY KEY,
+	    department_name VARCHAR(100) NOT NULL UNIQUE,
+	    location VARCHAR(100),
+	    primary_location VARCHAR(100),
+	    secondary_location VARCHAR(100),
+	    ternary_location VARCHAR(100)
+	);
+2025-11-07 10:45:58.643 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments rename column location to location_old;
+2025-11-07 10:46:13.622 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column ternary_location;
+2025-11-07 10:46:21.566 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add column location_new TEXT;
+2025-11-07 10:47:52.170 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 10:47:59.561 IST [54409] @ LOG:  checkpoint complete: wrote 71 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=7.315 s, sync=0.046 s, total=7.392 s; sync files=51, longest=0.009 s, average=0.001 s; distance=311 kB, estimate=355 kB; lsn=0/5D7904A0, redo lsn=0/5D790468
+2025-11-07 10:50:54.775 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP,
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) AS snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	
+	    current_md5_metadata_cte AS (
+	        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        -- UNION ALL 
+	        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        -- UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	
+	    -- Step 1: Detect renamed objects (same MD5 but name changed)
+	    renamed_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'RENAMED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND s.object_md5 = c.object_md5
+	        WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	    ),
+	
+	    -- Step 2: Detect modified objects (same object, MD5 changed)
+	    modified_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'MODIFIED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	    ),
+	
+	    -- Step 3: Detect newly added objects
+	    added_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            NULL::text AS prev_object_md5,
+	            c.object_md5,
+	            'ADDED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS NULL
+	    ),
+	
+	    -- Step 4: Detect deleted objects (exist in staging but missing in current)
+	    deleted_objects AS (
+	        SELECT
+	            s.schema_name,
+	            s.object_type,
+	            s.object_type_name,
+	            s.object_subtype,
+	            s.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            NULL::text AS object_md5,
+	            'DELETED' AS change_type
+	        FROM pdcd_schema.md5_metadata_staging_tbl s
+	        LEFT JOIN current_md5_metadata_cte c
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE c.object_md5 IS NULL
+	    ),
+	
+	    -- Step 5: Combine all changes
+	    unified_changes AS (
+	        SELECT * FROM added_objects
+	        UNION ALL
+	        SELECT * FROM modified_objects
+	        UNION ALL
+	        SELECT * FROM renamed_objects
+	        UNION ALL
+	        SELECT * FROM deleted_objects
+	    ),
+	
+	    -- Step 6: Insert into final table
+	    inserted AS (
+	        -- INSERT INTO pdcd_schema.md5_metadata_tbl (
+	        --     snapshot_id,
+	        --     schema_name,
+	        --     object_type,
+	        --     object_type_name,
+	        --     object_subtype,
+	        --     object_subtype_name,
+	        --     object_subtype_details,
+	        --     object_md5,
+	        --     change_type
+	        -- )
+	        SELECT
+	            ns.snapshot_id,
+	            u.schema_name,
+	            u.object_type,
+	            u.object_type_name,
+	            u.object_subtype,
+	            u.object_subtype_name,
+	            COALESCE(u.new_object_subtype_details, u.prev_object_subtype_details),
+	            COALESCE(u.object_md5, u.prev_object_md5),
+	            u.change_type
+	        FROM unified_changes u
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-07 10:50:54.778 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "RETURNING" at character 5706
+2025-11-07 10:50:54.778 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP,
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) AS snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	
+	    current_md5_metadata_cte AS (
+	        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        -- UNION ALL 
+	        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        -- UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	
+	    -- Step 1: Detect renamed objects (same MD5 but name changed)
+	    renamed_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'RENAMED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND s.object_md5 = c.object_md5
+	        WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	    ),
+	
+	    -- Step 2: Detect modified objects (same object, MD5 changed)
+	    modified_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'MODIFIED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	    ),
+	
+	    -- Step 3: Detect newly added objects
+	    added_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            NULL::text AS prev_object_md5,
+	            c.object_md5,
+	            'ADDED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS NULL
+	    ),
+	
+	    -- Step 4: Detect deleted objects (exist in staging but missing in current)
+	    deleted_objects AS (
+	        SELECT
+	            s.schema_name,
+	            s.object_type,
+	            s.object_type_name,
+	            s.object_subtype,
+	            s.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            NULL::text AS object_md5,
+	            'DELETED' AS change_type
+	        FROM pdcd_schema.md5_metadata_staging_tbl s
+	        LEFT JOIN current_md5_metadata_cte c
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE c.object_md5 IS NULL
+	    ),
+	
+	    -- Step 5: Combine all changes
+	    unified_changes AS (
+	        SELECT * FROM added_objects
+	        UNION ALL
+	        SELECT * FROM modified_objects
+	        UNION ALL
+	        SELECT * FROM renamed_objects
+	        UNION ALL
+	        SELECT * FROM deleted_objects
+	    ),
+	
+	    -- Step 6: Insert into final table
+	    inserted AS (
+	        -- INSERT INTO pdcd_schema.md5_metadata_tbl (
+	        --     snapshot_id,
+	        --     schema_name,
+	        --     object_type,
+	        --     object_type_name,
+	        --     object_subtype,
+	        --     object_subtype_name,
+	        --     object_subtype_details,
+	        --     object_md5,
+	        --     change_type
+	        -- )
+	        SELECT
+	            ns.snapshot_id,
+	            u.schema_name,
+	            u.object_type,
+	            u.object_type_name,
+	            u.object_subtype,
+	            u.object_subtype_name,
+	            COALESCE(u.new_object_subtype_details, u.prev_object_subtype_details),
+	            COALESCE(u.object_md5, u.prev_object_md5),
+	            u.change_type
+	        FROM unified_changes u
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-07 10:51:15.672 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP,
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) AS snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	
+	    current_md5_metadata_cte AS (
+	        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        -- UNION ALL 
+	        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        -- UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	
+	    -- Step 1: Detect renamed objects (same MD5 but name changed)
+	    renamed_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'RENAMED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND s.object_md5 = c.object_md5
+	        WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	    ),
+	
+	    -- Step 2: Detect modified objects (same object, MD5 changed)
+	    modified_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'MODIFIED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	    ),
+	
+	    -- Step 3: Detect newly added objects
+	    added_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            NULL::text AS prev_object_md5,
+	            c.object_md5,
+	            'ADDED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS NULL
+	    ),
+	
+	    -- Step 4: Detect deleted objects (exist in staging but missing in current)
+	    deleted_objects AS (
+	        SELECT
+	            s.schema_name,
+	            s.object_type,
+	            s.object_type_name,
+	            s.object_subtype,
+	            s.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            NULL::text AS object_md5,
+	            'DELETED' AS change_type
+	        FROM pdcd_schema.md5_metadata_staging_tbl s
+	        LEFT JOIN current_md5_metadata_cte c
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE c.object_md5 IS NULL
+	    ),
+	
+	    -- Step 5: Combine all changes
+	    unified_changes AS (
+	        SELECT * FROM added_objects
+	        UNION ALL
+	        SELECT * FROM modified_objects
+	        UNION ALL
+	        SELECT * FROM renamed_objects
+	        UNION ALL
+	        SELECT * FROM deleted_objects
+	    ),
+	
+	    -- Step 6: Insert into final table
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5,
+	            change_type
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            u.schema_name,
+	            u.object_type,
+	            u.object_type_name,
+	            u.object_subtype,
+	            u.object_subtype_name,
+	            COALESCE(u.new_object_subtype_details, u.prev_object_subtype_details),
+	            COALESCE(u.object_md5, u.prev_object_md5),
+	            u.change_type
+	        FROM unified_changes u
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-07 10:52:29.785 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments alter column department_name type VARCHAR(150);
+2025-11-07 10:52:52.567 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 10:52:56.837 IST [54409] @ LOG:  checkpoint complete: wrote 42 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.246 s, sync=0.006 s, total=4.271 s; sync files=25, longest=0.003 s, average=0.001 s; distance=180 kB, estimate=338 kB; lsn=0/5D7BD660, redo lsn=0/5D7BD5F0
+2025-11-07 10:53:38.777 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments alter column department_name type VARCHAR(100);
+2025-11-07 10:56:48.342 IST [52582] jagdish_pandre@test_db ERROR:  column "p_table_list" does not exist at character 282
+2025-11-07 10:56:48.342 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH
+	    current_md5_metadata_cte AS (
+	        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        -- UNION ALL 
+	        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        -- UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	
+	    -- Step 1: Detect renamed objects (same MD5 but name changed)
+	    renamed_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'RENAMED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND s.object_md5 = c.object_md5
+	        WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	    ),
+	
+	    -- Step 2: Detect modified objects (same object, MD5 changed)
+	    modified_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'MODIFIED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	    ),
+	
+	    -- Step 3: Detect newly added objects
+	    added_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            NULL::text AS prev_object_md5,
+	            c.object_md5,
+	            'ADDED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS NULL
+	    ),
+	
+	    -- Step 4: Detect deleted objects (exist in staging but missing in current)
+	    deleted_objects AS (
+	        SELECT
+	            s.schema_name,
+	            s.object_type,
+	            s.object_type_name,
+	            s.object_subtype,
+	            s.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            NULL::text AS object_md5,
+	            'DELETED' AS change_type
+	        FROM pdcd_schema.md5_metadata_staging_tbl s
+	        LEFT JOIN current_md5_metadata_cte c
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE c.object_md5 IS NULL
+	    ),
+	
+	    -- Step 5: Combine all changes
+	    unified_changes AS (
+	        SELECT * FROM added_objects
+	        UNION ALL
+	        SELECT * FROM modified_objects
+	        UNION ALL
+	        SELECT * FROM renamed_objects
+	        UNION ALL
+	        SELECT * FROM deleted_objects
+	    )
+	    SELECT
+	    schema_name,
+	    object_type,
+	    object_type_name,
+	    object_subtype,
+	    object_subtype_name,
+	    -- COALESCE(new_object_subtype_details, prev_object_subtype_details) AS object_subtype_details,
+	    -- COALESCE(object_md5, prev_object_md5) AS object_md5,
+	    new_object_subtype_details AS object_subtype_details,
+	    object_md5,
+	    processed_time,
+	    change_type
+	FROM (
+	    SELECT * FROM added_objects
+	    UNION ALL
+	    SELECT * FROM renamed_objects
+	    UNION ALL
+	    SELECT * FROM modified_objects
+	    UNION ALL
+	    SELECT * FROM deleted_objects
+	) t
+	ORDER BY schema_name, object_type_name, object_subtype_name, change_type;
+2025-11-07 10:57:15.979 IST [52582] jagdish_pandre@test_db ERROR:  column "processed_time" does not exist at character 4685
+2025-11-07 10:57:15.979 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH
+	    current_md5_metadata_cte AS (
+	        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        -- UNION ALL 
+	        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        -- UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	    ),
+	
+	    -- Step 1: Detect renamed objects (same MD5 but name changed)
+	    renamed_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'RENAMED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND s.object_md5 = c.object_md5
+	        WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	    ),
+	
+	    -- Step 2: Detect modified objects (same object, MD5 changed)
+	    modified_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'MODIFIED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	    ),
+	
+	    -- Step 3: Detect newly added objects
+	    added_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            NULL::text AS prev_object_md5,
+	            c.object_md5,
+	            'ADDED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS NULL
+	    ),
+	
+	    -- Step 4: Detect deleted objects (exist in staging but missing in current)
+	    deleted_objects AS (
+	        SELECT
+	            s.schema_name,
+	            s.object_type,
+	            s.object_type_name,
+	            s.object_subtype,
+	            s.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            NULL::text AS object_md5,
+	            'DELETED' AS change_type
+	        FROM pdcd_schema.md5_metadata_staging_tbl s
+	        LEFT JOIN current_md5_metadata_cte c
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE c.object_md5 IS NULL
+	    ),
+	
+	    -- Step 5: Combine all changes
+	    unified_changes AS (
+	        SELECT * FROM added_objects
+	        UNION ALL
+	        SELECT * FROM modified_objects
+	        UNION ALL
+	        SELECT * FROM renamed_objects
+	        UNION ALL
+	        SELECT * FROM deleted_objects
+	    )
+	    SELECT
+	    schema_name,
+	    object_type,
+	    object_type_name,
+	    object_subtype,
+	    object_subtype_name,
+	    -- COALESCE(new_object_subtype_details, prev_object_subtype_details) AS object_subtype_details,
+	    -- COALESCE(object_md5, prev_object_md5) AS object_md5,
+	    new_object_subtype_details AS object_subtype_details,
+	    object_md5,
+	    processed_time,
+	    change_type
+	FROM (
+	    SELECT * FROM added_objects
+	    UNION ALL
+	    SELECT * FROM renamed_objects
+	    UNION ALL
+	    SELECT * FROM modified_objects
+	    UNION ALL
+	    SELECT * FROM deleted_objects
+	) t
+	ORDER BY schema_name, object_type_name, object_subtype_name, change_type;
+2025-11-07 10:57:52.839 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 10:57:56.222 IST [54409] @ LOG:  checkpoint complete: wrote 33 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.331 s, sync=0.022 s, total=3.383 s; sync files=29, longest=0.005 s, average=0.001 s; distance=167 kB, estimate=321 kB; lsn=0/5D7E7358, redo lsn=0/5D7E7320
+2025-11-07 11:05:14.286 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments alter column department_name type VARCHAR(150);
+2025-11-07 11:07:52.230 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 11:07:54.553 IST [54409] @ LOG:  checkpoint complete: wrote 23 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.302 s, sync=0.003 s, total=2.324 s; sync files=20, longest=0.002 s, average=0.001 s; distance=98 kB, estimate=298 kB; lsn=0/5D7FFCE0, redo lsn=0/5D7FFCA8
+2025-11-07 11:08:08.367 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments alter column department_name type VARCHAR(100);
+2025-11-07 11:13:50.607 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-07 11:13:54.224 IST [54409] @ LOG:  checkpoint complete: wrote 35 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.556 s, sync=0.023 s, total=3.619 s; sync files=31, longest=0.006 s, average=0.001 s; distance=168 kB, estimate=285 kB; lsn=0/5D829F28, redo lsn=0/5D829EF0

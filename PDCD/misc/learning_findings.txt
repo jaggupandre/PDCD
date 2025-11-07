@@ -1,0 +1,12 @@
+Two ways to increase the development speed of a data team
+- Minimizing the cost of mistakes
+- Exposing how data has changed over time
+
+
+To make this possible — as made clear by the limitations of the above approaches — we need to solve a few challenges.
+
+- Minimize the storage footprint of data versioning. 
+    This means not creating copies of data objects that remain unchanged between versions.
+    
+- Expose operations that let us interact directly with the versions. Things like “create a version”, “delete a version”, “compare two versions” are examples you might think of off the top of your head.
+- Work the same over any scale of data, data format, and both structured and unstructured data.

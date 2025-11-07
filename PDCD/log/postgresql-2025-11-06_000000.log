@@ -1,0 +1,4072 @@
+2025-11-06 00:00:23.082 IST [20816] jagdish_pandre@test_db ERROR:  column a.object_name does not exist at character 674
+2025-11-06 00:00:23.082 IST [20816] jagdish_pandre@test_db HINT:  Perhaps you meant to reference the column "m.object_name".
+2025-11-06 00:00:23.082 IST [20816] jagdish_pandre@test_db STATEMENT:  With current_md5_metadata_cte as (
+	        SELECT * FROM pdcd_schema.get_table_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(array['analytics_schema'])
+	)
+	SELECT
+	    m.schema_name,
+	    m.object_type,
+	    m.object_name as object_subtype_name,
+	    m.object_subtype,
+	    m.object_subtype_name,
+	    m.object_subtype_details,
+	    m.object_md5,
+	    'ADDED' AS change_type
+	from current_md5_metadata_cte m
+	LEFT JOIN audit_md5_metadata_tbl a
+	  ON a.schema_name = m.schema_name
+	 AND a.object_type = m.object_type
+	 AND a.object_name = m.object_type_name
+	 AND COALESCE(a.object_subtype, '') = COALESCE(m.object_subtype, '')
+	 AND COALESCE(a.object_subtype_name, '') = COALESCE(m.object_subtype_name, '')
+	WHERE a.object_md5 IS NULL
+	ORDER BY m.schema_name, m.object_type_name, m.object_subtype_name
+2025-11-06 00:02:27.635 IST [20816] jagdish_pandre@test_db ERROR:  column m.object_type_name does not exist at character 908
+2025-11-06 00:02:27.635 IST [20816] jagdish_pandre@test_db HINT:  Perhaps you meant to reference the column "a.object_type_name".
+2025-11-06 00:02:27.635 IST [20816] jagdish_pandre@test_db STATEMENT:  With current_md5_metadata_cte as (
+	        SELECT * FROM pdcd_schema.get_table_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(array['analytics_schema'])
+	)
+	SELECT
+	    m.schema_name,
+	    m.object_type,
+	    m.object_name as object_subtype_name,
+	    m.object_subtype,
+	    m.object_subtype_name,
+	    m.object_subtype_details,
+	    m.object_md5,
+	    'ADDED' AS change_type
+	from current_md5_metadata_cte m
+	LEFT JOIN audit_md5_metadata_tbl a
+	  ON a.schema_name = m.schema_name
+	 AND a.object_type = m.object_type
+	 AND a.object_type_name = m.object_name
+	 AND COALESCE(a.object_subtype, '') = COALESCE(m.object_subtype, '')
+	 AND COALESCE(a.object_subtype_name, '') = COALESCE(m.object_subtype_name, '')
+	WHERE a.object_md5 IS NULL
+	ORDER BY m.schema_name, m.object_type_name, m.object_subtype_name
+2025-11-06 00:04:09.641 IST [20816] jagdish_pandre@test_db ERROR:  column reference "object_subtype" is ambiguous at character 888
+2025-11-06 00:04:09.641 IST [20816] jagdish_pandre@test_db STATEMENT:  With current_md5_metadata_cte as (
+	        SELECT * FROM pdcd_schema.get_table_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(array['analytics_schema'])
+	)
+	SELECT
+	    m.schema_name,
+	    m.object_type,
+	    m.object_name as object_subtype_name,
+	    m.object_subtype,
+	    m.object_subtype_name,
+	    m.object_subtype_details,
+	    m.object_md5,
+	    'ADDED' AS change_type
+	from current_md5_metadata_cte m
+	LEFT JOIN audit_md5_metadata_tbl a
+	  ON a.schema_name = m.schema_name
+	 AND a.object_type = m.object_type
+	 AND a.object_type_name = m.object_name
+	 AND COALESCE(a.object_subtype, '') = COALESCE(m.object_subtype, '')
+	 AND COALESCE(a.object_subtype_name, '') = COALESCE(m.object_subtype_name, '')
+	WHERE a.object_md5 IS null and object_subtype not IN('Column') 
+2025-11-06 00:10:49.639 IST [20728] jagdish_pandre@postgres LOG:  disconnection: session time: 0:40:38.884 user=jagdish_pandre database=postgres host=127.0.0.1 port=58012
+2025-11-06 00:10:49.670 IST [20730] jagdish_pandre@test_db LOG:  disconnection: session time: 0:40:38.761 user=jagdish_pandre database=test_db host=127.0.0.1 port=58014
+2025-11-06 00:10:49.675 IST [20729] jagdish_pandre@postgres LOG:  disconnection: session time: 0:40:38.883 user=jagdish_pandre database=postgres host=127.0.0.1 port=58013
+2025-11-06 00:10:49.678 IST [20731] jagdish_pandre@test_db LOG:  disconnection: session time: 0:40:38.732 user=jagdish_pandre database=test_db host=127.0.0.1 port=58015
+2025-11-06 00:10:49.689 IST [20816] jagdish_pandre@test_db LOG:  disconnection: session time: 0:39:20.074 user=jagdish_pandre database=test_db host=127.0.0.1 port=58096
+2025-11-06 00:24:01.448 IST [5416] jagdish_pandre@postgres LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_table_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,          -- 'Column'
+	    object_subtype_name TEXT,     -- column_name
+	    object_subtype_details TEXT,  -- metadata string
+	    object_md5 TEXT               -- MD5 hash of details
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	
+	    FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+	$function$;
+2025-11-06 00:24:01.449 IST [5416] jagdish_pandre@postgres ERROR:  schema "pdcd_schema" does not exist
+2025-11-06 00:24:01.449 IST [5416] jagdish_pandre@postgres STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.get_table_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,          -- 'Column'
+	    object_subtype_name TEXT,     -- column_name
+	    object_subtype_details TEXT,  -- metadata string
+	    object_md5 TEXT               -- MD5 hash of details
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	
+	    FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+	$function$;
+2025-11-06 00:24:01.451 IST [5416] jagdish_pandre@postgres ERROR:  schema "pdcd_schema" does not exist at character 434
+2025-11-06 00:24:01.451 IST [5416] jagdish_pandre@postgres STATEMENT:  SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	    FROM pdcd_schema.get_columns_details(ARRAY['analytics_schema.departments']) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+2025-11-06 00:24:13.056 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_table_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,          -- 'Column'
+	    object_subtype_name TEXT,     -- column_name
+	    object_subtype_details TEXT,  -- metadata string
+	    object_md5 TEXT               -- MD5 hash of details
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	
+	    FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+	$function$;
+2025-11-06 00:24:13.057 IST [52582] jagdish_pandre@test_db ERROR:  cannot change return type of existing function
+2025-11-06 00:24:13.057 IST [52582] jagdish_pandre@test_db DETAIL:  Row type defined by OUT parameters is different.
+2025-11-06 00:24:13.057 IST [52582] jagdish_pandre@test_db HINT:  Use DROP FUNCTION pdcd_schema.get_table_columns_md5(text[]) first.
+2025-11-06 00:24:13.057 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.get_table_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,          -- 'Column'
+	    object_subtype_name TEXT,     -- column_name
+	    object_subtype_details TEXT,  -- metadata string
+	    object_md5 TEXT               -- MD5 hash of details
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	
+	    FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+	$function$;
+2025-11-06 00:24:21.464 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_table_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,          -- 'Column'
+	    object_subtype_name TEXT,     -- column_name
+	    object_subtype_details TEXT,  -- metadata string
+	    object_md5 TEXT               -- MD5 hash of details
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	
+	    FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+	$function$;
+2025-11-06 00:24:21.464 IST [52582] jagdish_pandre@test_db ERROR:  cannot change return type of existing function
+2025-11-06 00:24:21.464 IST [52582] jagdish_pandre@test_db DETAIL:  Row type defined by OUT parameters is different.
+2025-11-06 00:24:21.464 IST [52582] jagdish_pandre@test_db HINT:  Use DROP FUNCTION pdcd_schema.get_table_columns_md5(text[]) first.
+2025-11-06 00:24:21.464 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.get_table_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,          -- 'Column'
+	    object_subtype_name TEXT,     -- column_name
+	    object_subtype_details TEXT,  -- metadata string
+	    object_md5 TEXT               -- MD5 hash of details
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	
+	    FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+	$function$;
+2025-11-06 00:24:49.199 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_table_all_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        g.schema_name,
+	        'Table' AS object_type,
+	        g.object_type_name,
+	        'Columns' AS object_subtype,
+	        array_to_string(array_agg(g.object_subtype_name ORDER BY g.ordinal_position), ', ') AS object_subtype_name,
+	        NULL AS object_subtype_details,
+	        md5(string_agg(g.object_md5, '' ORDER BY g.ordinal_position)) AS object_md5
+	    FROM (
+	        SELECT 
+	            gtd.schema_name,
+	            gtd.table_name AS object_type_name,
+	            gtd.column_name AS object_subtype_name,
+	            gtd.ordinal_position,
+	            md5(gtd.object_subtype_details) AS object_md5
+	        FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ) AS g
+	    GROUP BY g.schema_name, g.object_type_name
+	    ORDER BY g.schema_name, g.object_type_name;
+	$function$;
+2025-11-06 00:24:49.200 IST [52582] jagdish_pandre@test_db ERROR:  cannot change return type of existing function
+2025-11-06 00:24:49.200 IST [52582] jagdish_pandre@test_db DETAIL:  Row type defined by OUT parameters is different.
+2025-11-06 00:24:49.200 IST [52582] jagdish_pandre@test_db HINT:  Use DROP FUNCTION pdcd_schema.get_table_all_columns_md5(text[]) first.
+2025-11-06 00:24:49.200 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.get_table_all_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        g.schema_name,
+	        'Table' AS object_type,
+	        g.object_type_name,
+	        'Columns' AS object_subtype,
+	        array_to_string(array_agg(g.object_subtype_name ORDER BY g.ordinal_position), ', ') AS object_subtype_name,
+	        NULL AS object_subtype_details,
+	        md5(string_agg(g.object_md5, '' ORDER BY g.ordinal_position)) AS object_md5
+	    FROM (
+	        SELECT 
+	            gtd.schema_name,
+	            gtd.table_name AS object_type_name,
+	            gtd.column_name AS object_subtype_name,
+	            gtd.ordinal_position,
+	            md5(gtd.object_subtype_details) AS object_md5
+	        FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ) AS g
+	    GROUP BY g.schema_name, g.object_type_name
+	    ORDER BY g.schema_name, g.object_type_name;
+	$function$;
+2025-11-06 00:24:58.056 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP FUNCTION pdcd_schema.get_table_all_columns_md5(text[]);
+2025-11-06 00:26:32.272 IST [52582] jagdish_pandre@test_db LOG:  statement: drop function pdcd_schema.get_table_md5();
+2025-11-06 00:26:32.273 IST [52582] jagdish_pandre@test_db ERROR:  function pdcd_schema.get_table_md5() does not exist
+2025-11-06 00:26:32.273 IST [52582] jagdish_pandre@test_db STATEMENT:  drop function pdcd_schema.get_table_md5();
+2025-11-06 00:26:49.453 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 00:26:49.701 IST [54409] @ LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.223 s, sync=0.003 s, total=0.249 s; sync files=3, longest=0.002 s, average=0.001 s; distance=9 kB, estimate=132 kB; lsn=0/5D209240, redo lsn=0/5D209208
+2025-11-06 00:26:59.752 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP FUNCTION pdcd_schema.get_table_md5(text[]);
+2025-11-06 00:27:19.445 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP FUNCTION pdcd_schema.get_table_all_columns_md5(text[]);
+2025-11-06 00:27:19.445 IST [52582] jagdish_pandre@test_db ERROR:  function pdcd_schema.get_table_all_columns_md5(text[]) does not exist
+2025-11-06 00:27:19.445 IST [52582] jagdish_pandre@test_db STATEMENT:  DROP FUNCTION pdcd_schema.get_table_all_columns_md5(text[]);
+2025-11-06 00:28:17.397 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP FUNCTION pdcd_schema.get_columns_details(text[]);
+2025-11-06 00:28:55.553 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_columns_details(
+	    p_table_list TEXT[] DEFAULT NULL  -- Array input like ARRAY['public'] or ARRAY['public.people','public.orders']
+	)
+	RETURNS TABLE (
+	    schema_name TEXT,
+	    table_name TEXT,
+	    column_name TEXT,
+	    data_type TEXT,
+	    character_maximum_length INT,
+	    numeric_precision INT,
+	    numeric_scale INT,
+	    is_nullable TEXT,
+	    column_default TEXT,
+	    is_identity TEXT,
+	    is_generated TEXT,
+	    generation_expression TEXT,
+	    constraint_name TEXT,
+	    ordinal_position INT,
+	    object_subtype_details TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH input_tables AS (
+	        -- Case 1: No input array provided → all user schemas
+	        SELECT NULL::TEXT AS schema_table
+	        WHERE p_table_list IS NULL
+	        UNION ALL
+	        -- Case 2: Expand provided array into individual entries
+	        SELECT UNNEST(p_table_list) AS schema_table
+	    )
+	    SELECT
+	        c.table_schema AS schema_name,
+	        c.table_name,
+	        c.column_name,
+	        c.data_type,
+	        c.character_maximum_length,
+	        c.numeric_precision,
+	        c.numeric_scale,
+	        c.is_nullable,
+	        c.column_default,
+	        c.is_identity,
+	        c.is_generated,
+	        c.generation_expression,
+	        tc.constraint_name,
+	        c.ordinal_position AS ordinal_position,
+	
+	        -- Build metadata string using CONCAT_WS for clarity
+	        CONCAT_WS(
+	            ',',
+	            CONCAT('schema_name:', COALESCE(c.table_schema, '')),
+	            CONCAT('table_name:', COALESCE(c.table_name, '')),
+	            CONCAT('column_name:', COALESCE(c.column_name, '')),
+	            CONCAT('data_type:', COALESCE(c.data_type, '')),
+	            CONCAT('max_length:', COALESCE(c.character_maximum_length::TEXT, '')),
+	            CONCAT('numeric_precision:', COALESCE(c.numeric_precision::TEXT, '')),
+	            CONCAT('numeric_scale:', COALESCE(c.numeric_scale::TEXT, '')),
+	            CONCAT('nullable:', COALESCE(c.is_nullable, '')),
+	            CONCAT('default_value:', COALESCE(c.column_default, '')),
+	            CONCAT('is_identity:', COALESCE(c.is_identity, '')),
+	            CONCAT('is_generated:', COALESCE(c.is_generated, '')),
+	            CONCAT('generation_expression:', COALESCE(c.generation_expression, '')),
+	            CONCAT('constraint_name:', COALESCE(tc.constraint_name, '')),
+	            CONCAT('ordinal_position:', c.ordinal_position::TEXT)
+	        ) AS object_subtype_details
+	
+	    FROM information_schema.columns c
+	    LEFT JOIN information_schema.key_column_usage tc
+	        ON c.table_schema = tc.table_schema
+	       AND c.table_name = tc.table_name
+	       AND c.column_name = tc.column_name
+	
+	    WHERE
+	        (
+	            -- CASE 1: no input → all user schemas except system ones
+	            p_table_list IS NULL
+	            AND c.table_schema NOT IN ('pg_catalog', 'information_schema')
+	        )
+	        OR
+	        (
+	            -- CASE 2a: Only schema name(s) provided (like ARRAY['public'])
+	            p_table_list IS NOT NULL
+	            AND c.table_schema = ANY(p_table_list)
+	        )
+	        OR
+	        (
+	            -- CASE 2b: Fully qualified schema.table provided (like ARRAY['public.people'])
+	            p_table_list IS NOT NULL
+	            AND (c.table_schema || '.' || c.table_name) = ANY(p_table_list)
+	        )
+	
+	    ORDER BY c.table_schema, c.table_name, c.ordinal_position;
+	$function$;
+2025-11-06 00:29:48.899 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP FUNCTION pdcd_schema.get_table_columns_md5(text[]);
+2025-11-06 00:30:14.285 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_table_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,          -- 'Column'
+	    object_subtype_name TEXT,     -- column_name
+	    object_subtype_details TEXT,  -- metadata string
+	    object_md5 TEXT               -- MD5 hash of details
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	
+	    FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+	$function$;
+2025-11-06 00:30:44.826 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_table_all_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        g.schema_name,
+	        'Table' AS object_type,
+	        g.object_type_name,
+	        'Columns' AS object_subtype,
+	        array_to_string(array_agg(g.object_subtype_name ORDER BY g.ordinal_position), ', ') AS object_subtype_name,
+	        NULL AS object_subtype_details,
+	        md5(string_agg(g.object_md5, '' ORDER BY g.ordinal_position)) AS object_md5
+	    FROM (
+	        SELECT 
+	            gtd.schema_name,
+	            gtd.table_name AS object_type_name,
+	            gtd.column_name AS object_subtype_name,
+	            gtd.ordinal_position,
+	            md5(gtd.object_subtype_details) AS object_md5
+	        FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ) AS g
+	    GROUP BY g.schema_name, g.object_type_name
+	    ORDER BY g.schema_name, g.object_type_name;
+	$function$;
+2025-11-06 00:31:18.864 IST [52582] jagdish_pandre@test_db ERROR:  function pdcd_schema.get_table_md5(text[]) does not exist at character 166
+2025-11-06 00:31:18.864 IST [52582] jagdish_pandre@test_db HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+2025-11-06 00:31:18.864 IST [52582] jagdish_pandre@test_db QUERY:  
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) as snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5,
+	            change_type
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_name AS object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5,
+	            'ADDED'
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	
+2025-11-06 00:31:18.864 IST [52582] jagdish_pandre@test_db CONTEXT:  SQL function "load_md5_metadata_tbl" during startup
+2025-11-06 00:31:18.864 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT * FROM pdcd_schema.load_md5_metadata_tbl(ARRAY['analytics_schema']);
+2025-11-06 00:31:49.692 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 00:31:51.783 IST [54409] @ LOG:  checkpoint complete: wrote 21 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.064 s, sync=0.004 s, total=2.092 s; sync files=11, longest=0.002 s, average=0.001 s; distance=107 kB, estimate=130 kB; lsn=0/5D224130, redo lsn=0/5D2240F8
+2025-11-06 00:33:41.470 IST [52582] jagdish_pandre@test_db ERROR:  function pdcd_schema.get_table_md5(text[]) does not exist at character 15
+2025-11-06 00:33:41.470 IST [52582] jagdish_pandre@test_db HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+2025-11-06 00:33:41.470 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema']);
+2025-11-06 00:34:09.023 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_table_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH all_objects AS (
+	        SELECT
+	            g.schema_name,
+	            g.object_type_name,
+	            'columns' AS obj_type,
+	            g.object_md5 AS obj_md5
+	        FROM pdcd_schema.get_table_all_columns_md5(p_table_list) g
+	    )
+	    SELECT
+	        ao.schema_name,
+	        'Table' AS object_type,
+	        ao.object_type_name,
+	        'All_Table_Objects' AS object_subtype,
+	        array_to_string(array_agg(DISTINCT ao.obj_type ORDER BY ao.obj_type), ', ') AS object_subtype_name,
+	        NULL AS object_subtype_details,
+	        md5(string_agg(ao.obj_md5, '' ORDER BY ao.obj_type)) AS object_md5
+	    FROM all_objects ao
+	    GROUP BY ao.schema_name, ao.object_type_name
+	    ORDER BY ao.schema_name, ao.object_type_name;
+	$function$;
+2025-11-06 00:35:40.068 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP FUNCTION pdcd_schema.pdcd_schema.get_table_columns_md5(text[]);
+2025-11-06 00:35:40.068 IST [52582] jagdish_pandre@test_db ERROR:  cross-database references are not implemented: pdcd_schema.pdcd_schema.get_table_columns_md5
+2025-11-06 00:35:40.068 IST [52582] jagdish_pandre@test_db STATEMENT:  DROP FUNCTION pdcd_schema.pdcd_schema.get_table_columns_md5(text[]);
+2025-11-06 00:35:48.497 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP FUNCTION pdcd_schema.get_table_columns_md5(text[]);
+2025-11-06 00:36:08.424 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_table_columns_md5(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE(
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,          -- 'Column'
+	    object_subtype_name TEXT,     -- column_name
+	    object_subtype_details TEXT,  -- metadata string
+	    object_md5 TEXT               -- MD5 hash of details
+	)
+	LANGUAGE SQL
+	AS $function$
+	    SELECT
+	        gtd.schema_name,
+	        'Table' AS object_type,
+	        gtd.table_name AS object_type_name,
+	        'Column' AS object_subtype,
+	        gtd.column_name AS object_subtype_name,
+	
+	        -- Build column details for tracking changes
+	        gtd.object_subtype_details AS object_subtype_details,
+	
+	        -- Create MD5 hash from normalized concatenated string
+	        MD5(gtd.object_subtype_details) AS object_md5
+	
+	    FROM pdcd_schema.get_columns_details(p_table_list) AS gtd
+	    ORDER BY gtd.schema_name, gtd.table_name, gtd.ordinal_position;
+	$function$;
+2025-11-06 00:36:49.781 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 00:36:51.172 IST [54409] @ LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.366 s, sync=0.004 s, total=1.392 s; sync files=9, longest=0.003 s, average=0.001 s; distance=47 kB, estimate=122 kB; lsn=0/5D230020, redo lsn=0/5D22FFD0
+2025-11-06 00:36:51.274 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP FUNCTION pdcd_schema.load_md5_metadata_tbl(text[]);
+2025-11-06 00:38:07.509 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.audit_md5_metadata_tbl;
+2025-11-06 00:38:07.527 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.audit_md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 00:38:07.550 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_audit_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT snapshot_id, snapshot_process_time AS processed_time
+	        FROM pdcd_schema.load_snapshot_tbl()
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.audit_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        ns.processed_time   -- ✅ added this
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-06 00:39:11.000 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column primary_location ;
+2025-11-06 00:41:49.056 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 00:41:55.265 IST [54409] @ LOG:  checkpoint complete: wrote 60 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=6.092 s, sync=0.052 s, total=6.209 s; sync files=67, longest=0.006 s, average=0.001 s; distance=269 kB, estimate=269 kB; lsn=0/5D273628, redo lsn=0/5D2735F0
+2025-11-06 01:22:15.156 IST [52582] jagdish_pandre@test_db ERROR:  function pdcd_schema.load_md5_metadata_tbl(text[]) does not exist at character 15
+2025-11-06 01:22:15.156 IST [52582] jagdish_pandre@test_db HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+2025-11-06 01:22:15.156 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT * FROM pdcd_schema.load_md5_metadata_tbl(ARRAY['analytics_schema']);
+2025-11-06 01:22:32.969 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.md5_metadata_tbl;
+2025-11-06 01:22:32.978 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED'   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	);
+2025-11-06 01:22:32.990 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP,
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) as snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5,
+	            change_type
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5,
+	            'ADDED'
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-06 01:24:35.352 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.audit_md5_metadata_tbl;
+2025-11-06 01:24:35.361 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.audit_md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 01:24:35.372 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_audit_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT snapshot_id, snapshot_process_time AS processed_time
+	        FROM pdcd_schema.load_snapshot_tbl()
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.audit_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        ns.processed_time   -- ✅ added this
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-06 01:25:18.160 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add column primary_location TEXT;
+2025-11-06 01:26:20.511 IST [29169] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=59841
+2025-11-06 01:26:20.515 IST [29169] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 01:26:20.532 IST [29169] jagdish_pandre@postgres LOG:  disconnection: session time: 0:00:00.021 user=jagdish_pandre database=postgres host=127.0.0.1 port=59841
+2025-11-06 01:26:20.535 IST [29170] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=59842
+2025-11-06 01:26:20.540 IST [29170] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 01:26:20.570 IST [29171] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=59843
+2025-11-06 01:26:20.573 IST [29171] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 01:26:20.633 IST [29172] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=59844
+2025-11-06 01:26:20.636 IST [29172] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 01:26:20.665 IST [29173] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=59845
+2025-11-06 01:26:20.672 IST [29173] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 01:26:20.712 IST [29174] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=59846
+2025-11-06 01:26:20.715 IST [29174] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 01:26:20.778 IST [29172] jagdish_pandre@test_db ERROR:  column m.object_name does not exist at character 695
+2025-11-06 01:26:20.778 IST [29172] jagdish_pandre@test_db HINT:  Perhaps you meant to reference the column "m.object_type".
+2025-11-06 01:26:20.778 IST [29172] jagdish_pandre@test_db STATEMENT:  With current_md5_metadata_cte as (
+	        SELECT * FROM pdcd_schema.get_table_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(array['analytics_schema'])
+	)
+	SELECT
+	    m.schema_name,
+	    m.object_type,
+	    m.object_name as object_subtype_name,
+	    m.object_subtype,
+	    m.object_subtype_name,
+	    m.object_subtype_details,
+	    m.object_md5,
+	    'ADDED' AS change_type
+	from current_md5_metadata_cte m
+	LEFT JOIN audit_md5_metadata_tbl a
+	  ON a.schema_name = m.schema_name
+	 AND a.object_type = m.object_type
+	 AND a.object_type_name = m.object_name
+	 AND COALESCE(a.object_subtype, '') = COALESCE(m.object_subtype, '')
+	 AND COALESCE(a.object_subtype_name, '') = COALESCE(m.object_subtype_name, '')
+	WHERE a.object_md5 IS null and m.object_subtype not IN('Columns') 
+2025-11-06 01:26:21.094 IST [29175] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=59847
+2025-11-06 01:26:21.098 IST [29174] jagdish_pandre@test_db ERROR:  canceling statement due to user request
+2025-11-06 01:26:21.098 IST [29174] jagdish_pandre@test_db STATEMENT:  SELECT i.inhrelid relid, pc.relnamespace parent_ns, pc.oid parent_oid, i.inhseqno
+	FROM pg_catalog.pg_inherits i, pg_class rc, pg_class pc
+	WHERE rc.oid=i.inhrelid AND rc.relnamespace=$1 AND pc.oid=i.inhparent
+2025-11-06 01:26:49.329 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 01:26:56.676 IST [29172] jagdish_pandre@test_db ERROR:  column m.object_name does not exist at character 370
+2025-11-06 01:26:56.676 IST [29172] jagdish_pandre@test_db HINT:  Perhaps you meant to reference the column "m.object_type".
+2025-11-06 01:26:56.676 IST [29172] jagdish_pandre@test_db STATEMENT:  With current_md5_metadata_cte as (
+	        SELECT * FROM pdcd_schema.get_table_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(array['analytics_schema'])
+	)
+	SELECT
+	    m.schema_name,
+	    m.object_type,
+	    m.object_name as object_subtype_name,
+	    m.object_subtype,
+	    m.object_subtype_name,
+	    m.object_subtype_details,
+	    m.object_md5,
+	    'ADDED' AS change_type
+	from current_md5_metadata_cte m
+	LEFT JOIN audit_md5_metadata_tbl a
+	  ON a.schema_name = m.schema_name
+	 AND a.object_type = m.object_type
+	 AND a.object_type_name = m.object_type_name
+	 AND COALESCE(a.object_subtype, '') = COALESCE(m.object_subtype, '')
+	 AND COALESCE(a.object_subtype_name, '') = COALESCE(m.object_subtype_name, '')
+	WHERE a.object_md5 IS null and m.object_subtype not IN('Columns') 
+2025-11-06 01:26:57.489 IST [54409] @ LOG:  checkpoint complete: wrote 79 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=8.091 s, sync=0.035 s, total=8.161 s; sync files=57, longest=0.018 s, average=0.001 s; distance=331 kB, estimate=331 kB; lsn=0/5D2C63B0, redo lsn=0/5D2C6378
+2025-11-06 01:28:42.657 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add column secondary_location TEXT;
+2025-11-06 01:31:49.531 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 01:31:53.277 IST [54409] @ LOG:  checkpoint complete: wrote 36 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=3.644 s, sync=0.044 s, total=3.747 s; sync files=37, longest=0.006 s, average=0.002 s; distance=151 kB, estimate=313 kB; lsn=0/5D2EC118, redo lsn=0/5D2EC0E0
+2025-11-06 01:31:56.102 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "TEXT" at character 73
+2025-11-06 01:31:56.102 IST [52582] jagdish_pandre@test_db STATEMENT:  alter table analytics_schema.departments drop column secondary_location TEXT;
+2025-11-06 01:32:00.140 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column secondary_location;
+2025-11-06 01:32:06.574 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column primary_location;
+2025-11-06 01:32:50.638 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add column secondary_location TEXT;
+2025-11-06 01:33:06.529 IST [29172] jagdish_pandre@test_db ERROR:  column m.object_name does not exist at character 370
+2025-11-06 01:33:06.529 IST [29172] jagdish_pandre@test_db HINT:  Perhaps you meant to reference the column "m.object_type".
+2025-11-06 01:33:06.529 IST [29172] jagdish_pandre@test_db STATEMENT:  With current_md5_metadata_cte as (
+	        SELECT * FROM pdcd_schema.get_table_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(array['analytics_schema'])
+	)
+	SELECT
+	    m.schema_name,
+	    m.object_type,
+	    m.object_name as object_subtype_name,
+	    m.object_subtype,
+	    m.object_subtype_name,
+	    m.object_subtype_details,
+	    m.object_md5,
+	    'ADDED' AS change_type
+	from current_md5_metadata_cte m
+	LEFT JOIN audit_md5_metadata_tbl a
+	  ON a.schema_name = m.schema_name
+	 AND a.object_type = m.object_type
+	 AND a.object_type_name = m.object_type_name
+	 AND COALESCE(a.object_subtype, '') = COALESCE(m.object_subtype, '')
+	 AND COALESCE(a.object_subtype_name, '') = COALESCE(m.object_subtype_name, '')
+	WHERE a.object_md5 IS null and m.object_subtype not IN('Columns') 
+2025-11-06 01:34:41.324 IST [29172] jagdish_pandre@test_db ERROR:  column m.object_name does not exist at character 370
+2025-11-06 01:34:41.324 IST [29172] jagdish_pandre@test_db HINT:  Perhaps you meant to reference the column "m.object_type".
+2025-11-06 01:34:41.324 IST [29172] jagdish_pandre@test_db STATEMENT:  With current_md5_metadata_cte as (
+	        SELECT * FROM pdcd_schema.get_table_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(array['analytics_schema'])
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(array['analytics_schema'])
+	)
+	SELECT
+	    m.schema_name,
+	    m.object_type,
+	    m.object_name as object_subtype_name,
+	    m.object_subtype,
+	    m.object_subtype_name,
+	    m.object_subtype_details,
+	    m.object_md5,
+	    'ADDED' AS change_type
+	from current_md5_metadata_cte m
+	LEFT JOIN audit_md5_metadata_tbl a
+	  ON a.schema_name = m.schema_name
+	 AND a.object_type = m.object_type
+	 AND a.object_type_name = m.object_type_name
+	 AND COALESCE(a.object_subtype, '') = COALESCE(m.object_subtype, '')
+	 AND COALESCE(a.object_subtype_name, '') = COALESCE(m.object_subtype_name, '')
+	WHERE a.object_md5 IS null and m.object_subtype not IN('Columns') 
+2025-11-06 01:36:49.278 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 01:36:51.893 IST [54409] @ LOG:  checkpoint complete: wrote 25 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.516 s, sync=0.039 s, total=2.616 s; sync files=36, longest=0.007 s, average=0.002 s; distance=54 kB, estimate=287 kB; lsn=0/5D2F9B60, redo lsn=0/5D2F9B28
+2025-11-06 01:43:51.887 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.audit_md5_metadata_tbl;
+2025-11-06 01:43:51.914 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.audit_md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 01:43:51.946 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_audit_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- ✅ Step 1: Clear old audit data before reloading
+	    TRUNCATE TABLE pdcd_schema.audit_md5_metadata_tbl RESTART IDENTITY;
+	
+	    -- ✅ Step 2: Insert fresh data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT snapshot_id, snapshot_process_time AS processed_time
+	        FROM pdcd_schema.load_snapshot_tbl()
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.audit_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details, object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        ns.processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	
+	END;
+	$function$;
+2025-11-06 01:46:49.923 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 01:46:54.791 IST [54409] @ LOG:  checkpoint complete: wrote 47 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.814 s, sync=0.021 s, total=4.869 s; sync files=40, longest=0.006 s, average=0.001 s; distance=209 kB, estimate=279 kB; lsn=0/5D32E308, redo lsn=0/5D32E2D0
+2025-11-06 01:58:04.931 IST [52582] jagdish_pandre@test_db ERROR:  column reference "snapshot_id" is ambiguous at character 39
+2025-11-06 01:58:04.931 IST [52582] jagdish_pandre@test_db DETAIL:  It could refer to either a PL/pgSQL variable or a table column.
+2025-11-06 01:58:04.931 IST [52582] jagdish_pandre@test_db QUERY:  WITH new_snapshot AS (
+	        SELECT snapshot_id, snapshot_process_time AS processed_time
+	        FROM pdcd_schema.load_snapshot_tbl()
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.audit_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details, object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        ns.processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype
+2025-11-06 01:58:04.931 IST [52582] jagdish_pandre@test_db CONTEXT:  PL/pgSQL function pdcd_schema.load_audit_md5_metadata_tbl(text[]) line 7 at RETURN QUERY
+2025-11-06 01:58:04.931 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT * FROM pdcd_schema.load_audit_md5_metadata_tbl(ARRAY['analytics_schema']);
+2025-11-06 02:00:46.146 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "column" at character 20
+2025-11-06 02:00:46.146 IST [52582] jagdish_pandre@test_db STATEMENT:  alter table rename column secondary_location primary_location;
+2025-11-06 02:01:00.089 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "primary_location" at character 75
+2025-11-06 02:01:00.089 IST [52582] jagdish_pandre@test_db STATEMENT:  alter table analytics_schema.departments rename column secondary_location primary_location;
+2025-11-06 02:01:37.282 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments rename column secondary_location to primary_location;
+2025-11-06 02:01:49.829 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 02:01:52.405 IST [54409] @ LOG:  checkpoint complete: wrote 25 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.525 s, sync=0.013 s, total=2.577 s; sync files=28, longest=0.002 s, average=0.001 s; distance=49 kB, estimate=256 kB; lsn=0/5D33A890, redo lsn=0/5D33A858
+2025-11-06 02:24:57.890 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.get_columns_details(
+	    p_table_list TEXT[] DEFAULT NULL  -- Array input like ARRAY['public'] or ARRAY['public.people','public.orders']
+	)
+	RETURNS TABLE (
+	    schema_name TEXT,
+	    table_name TEXT,
+	    column_name TEXT,
+	    data_type TEXT,
+	    character_maximum_length INT,
+	    numeric_precision INT,
+	    numeric_scale INT,
+	    is_nullable TEXT,
+	    column_default TEXT,
+	    is_identity TEXT,
+	    is_generated TEXT,
+	    generation_expression TEXT,
+	    constraint_name TEXT,
+	    ordinal_position INT,
+	    object_subtype_details TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH input_tables AS (
+	        -- Case 1: No input array provided → all user schemas
+	        SELECT NULL::TEXT AS schema_table
+	        WHERE p_table_list IS NULL
+	        UNION ALL
+	        -- Case 2: Expand provided array into individual entries
+	        SELECT UNNEST(p_table_list) AS schema_table
+	    )
+	    SELECT
+	        c.table_schema AS schema_name,
+	        c.table_name,
+	        c.column_name,
+	        c.data_type,
+	        c.character_maximum_length,
+	        c.numeric_precision,
+	        c.numeric_scale,
+	        c.is_nullable,
+	        c.column_default,
+	        c.is_identity,
+	        c.is_generated,
+	        c.generation_expression,
+	        tc.constraint_name,
+	        c.ordinal_position AS ordinal_position,
+	
+	        -- Build metadata string using CONCAT_WS for clarity
+	        CONCAT_WS(
+	            ',',
+	            -- CONCAT('schema_name:', COALESCE(c.table_schema, '')),
+	            -- CONCAT('table_name:', COALESCE(c.table_name, '')),
+	            -- CONCAT('column_name:', COALESCE(c.column_name, '')),
+	            CONCAT('data_type:', COALESCE(c.data_type, '')),
+	            CONCAT('max_length:', COALESCE(c.character_maximum_length::TEXT, '')),
+	            CONCAT('numeric_precision:', COALESCE(c.numeric_precision::TEXT, '')),
+	            CONCAT('numeric_scale:', COALESCE(c.numeric_scale::TEXT, '')),
+	            CONCAT('nullable:', COALESCE(c.is_nullable, '')),
+	            CONCAT('default_value:', COALESCE(c.column_default, '')),
+	            CONCAT('is_identity:', COALESCE(c.is_identity, '')),
+	            CONCAT('is_generated:', COALESCE(c.is_generated, '')),
+	            CONCAT('generation_expression:', COALESCE(c.generation_expression, '')),
+	            CONCAT('constraint_name:', COALESCE(tc.constraint_name, '')),
+	            CONCAT('ordinal_position:', c.ordinal_position::TEXT)
+	        ) AS object_subtype_details
+	
+	    FROM information_schema.columns c
+	    LEFT JOIN information_schema.key_column_usage tc
+	        ON c.table_schema = tc.table_schema
+	       AND c.table_name = tc.table_name
+	       AND c.column_name = tc.column_name
+	
+	    WHERE
+	        (
+	            -- CASE 1: no input → all user schemas except system ones
+	            p_table_list IS NULL
+	            AND c.table_schema NOT IN ('pg_catalog', 'information_schema')
+	        )
+	        OR
+	        (
+	            -- CASE 2a: Only schema name(s) provided (like ARRAY['public'])
+	            p_table_list IS NOT NULL
+	            AND c.table_schema = ANY(p_table_list)
+	        )
+	        OR
+	        (
+	            -- CASE 2b: Fully qualified schema.table provided (like ARRAY['public.people'])
+	            p_table_list IS NOT NULL
+	            AND (c.table_schema || '.' || c.table_name) = ANY(p_table_list)
+	        )
+	
+	    ORDER BY c.table_schema, c.table_name, c.ordinal_position;
+	$function$;
+2025-11-06 02:25:56.502 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column primary_location ;
+2025-11-06 02:26:49.443 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 02:26:52.268 IST [54409] @ LOG:  checkpoint complete: wrote 27 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.745 s, sync=0.038 s, total=2.826 s; sync files=39, longest=0.011 s, average=0.001 s; distance=103 kB, estimate=241 kB; lsn=0/5D354838, redo lsn=0/5D354800
+2025-11-06 02:26:53.227 IST [52582] jagdish_pandre@test_db ERROR:  column reference "snapshot_id" is ambiguous at character 39
+2025-11-06 02:26:53.227 IST [52582] jagdish_pandre@test_db DETAIL:  It could refer to either a PL/pgSQL variable or a table column.
+2025-11-06 02:26:53.227 IST [52582] jagdish_pandre@test_db QUERY:  WITH new_snapshot AS (
+	        SELECT snapshot_id, snapshot_process_time AS processed_time
+	        FROM pdcd_schema.load_snapshot_tbl()
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.audit_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details, object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        ns.processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype
+2025-11-06 02:26:53.227 IST [52582] jagdish_pandre@test_db CONTEXT:  PL/pgSQL function pdcd_schema.load_audit_md5_metadata_tbl(text[]) line 7 at RETURN QUERY
+2025-11-06 02:26:53.227 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT * FROM pdcd_schema.load_audit_md5_metadata_tbl(ARRAY['analytics_schema']);
+2025-11-06 02:31:17.114 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_audit_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- ✅ Step 1: Truncate audit table before load
+	    TRUNCATE TABLE pdcd_schema.audit_md5_metadata_tbl;
+	
+	    -- ✅ Step 2: Return query with proper qualification
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.snapshot_process_time AS processed_time
+	        FROM pdcd_schema.load_snapshot_tbl() AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.audit_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details, object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        ns.processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-06 02:31:31.187 IST [52582] jagdish_pandre@test_db ERROR:  column reference "metadata_id" is ambiguous at character 1076
+2025-11-06 02:31:31.187 IST [52582] jagdish_pandre@test_db DETAIL:  It could refer to either a PL/pgSQL variable or a table column.
+2025-11-06 02:31:31.187 IST [52582] jagdish_pandre@test_db QUERY:  WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.snapshot_process_time AS processed_time
+	        FROM pdcd_schema.load_snapshot_tbl() AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.audit_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details, object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        ns.processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name
+2025-11-06 02:31:31.187 IST [52582] jagdish_pandre@test_db CONTEXT:  PL/pgSQL function pdcd_schema.load_audit_md5_metadata_tbl(text[]) line 7 at RETURN QUERY
+2025-11-06 02:31:31.187 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT * FROM pdcd_schema.load_audit_md5_metadata_tbl(ARRAY['analytics_schema']);
+2025-11-06 02:31:49.288 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 02:31:50.288 IST [54409] @ LOG:  checkpoint complete: wrote 10 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.948 s, sync=0.017 s, total=1.002 s; sync files=18, longest=0.003 s, average=0.001 s; distance=47 kB, estimate=222 kB; lsn=0/5D360830, redo lsn=0/5D3607F8
+2025-11-06 02:33:14.834 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_audit_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- ✅ Step 1: Truncate before load
+	    TRUNCATE TABLE pdcd_schema.audit_md5_metadata_tbl;
+	
+	    -- ✅ Step 2: Generate and load snapshot data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.snapshot_process_time AS processed_time
+	        FROM pdcd_schema.load_snapshot_tbl() AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.audit_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.audit_md5_metadata_tbl.metadata_id, 
+	            pdcd_schema.audit_md5_metadata_tbl.snapshot_id, 
+	            pdcd_schema.audit_md5_metadata_tbl.schema_name, 
+	            pdcd_schema.audit_md5_metadata_tbl.object_type, 
+	            pdcd_schema.audit_md5_metadata_tbl.object_type_name, 
+	            pdcd_schema.audit_md5_metadata_tbl.object_subtype, 
+	            pdcd_schema.audit_md5_metadata_tbl.object_subtype_name, 
+	            pdcd_schema.audit_md5_metadata_tbl.object_subtype_details, 
+	            pdcd_schema.audit_md5_metadata_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        ns.processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-06 02:35:17.581 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "*" at character 8
+2025-11-06 02:35:17.581 IST [52582] jagdish_pandre@test_db STATEMENT:  delete * from pdcd_schema.snapshot_tbl where snapshot_id = 2;
+2025-11-06 02:36:49.294 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 02:36:51.128 IST [54409] @ LOG:  checkpoint complete: wrote 18 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.782 s, sync=0.017 s, total=1.835 s; sync files=22, longest=0.006 s, average=0.001 s; distance=54 kB, estimate=205 kB; lsn=0/5D36E2A0, redo lsn=0/5D36E268
+2025-11-06 03:18:48.634 IST [29170] jagdish_pandre@postgres LOG:  disconnection: session time: 1:52:28.098 user=jagdish_pandre database=postgres host=127.0.0.1 port=59842
+2025-11-06 03:18:48.649 IST [29171] jagdish_pandre@postgres LOG:  disconnection: session time: 1:52:28.078 user=jagdish_pandre database=postgres host=127.0.0.1 port=59843
+2025-11-06 03:18:48.660 IST [29172] jagdish_pandre@test_db LOG:  disconnection: session time: 1:52:28.027 user=jagdish_pandre database=test_db host=127.0.0.1 port=59844
+2025-11-06 03:18:48.671 IST [29173] jagdish_pandre@test_db LOG:  disconnection: session time: 1:52:28.005 user=jagdish_pandre database=test_db host=127.0.0.1 port=59845
+2025-11-06 03:18:48.686 IST [29174] jagdish_pandre@test_db LOG:  disconnection: session time: 1:52:27.974 user=jagdish_pandre database=test_db host=127.0.0.1 port=59846
+2025-11-06 10:49:50.335 IST [44096] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=50230
+2025-11-06 10:49:50.340 IST [44096] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 10:49:50.370 IST [44096] jagdish_pandre@postgres LOG:  disconnection: session time: 0:00:00.035 user=jagdish_pandre database=postgres host=127.0.0.1 port=50230
+2025-11-06 10:49:50.372 IST [44097] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=50231
+2025-11-06 10:49:50.376 IST [44097] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 10:49:50.430 IST [44098] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=50232
+2025-11-06 10:49:50.433 IST [44098] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 10:49:50.510 IST [44099] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=50233
+2025-11-06 10:49:50.513 IST [44099] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 10:49:50.521 IST [44100] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=50234
+2025-11-06 10:49:50.524 IST [44100] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 10:49:50.569 IST [44101] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=50235
+2025-11-06 10:49:50.572 IST [44101] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 10:54:07.004 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 10:54:08.773 IST [54409] @ LOG:  checkpoint complete: wrote 17 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.743 s, sync=0.002 s, total=1.771 s; sync files=6, longest=0.001 s, average=0.001 s; distance=39 kB, estimate=188 kB; lsn=0/5D377EB0, redo lsn=0/5D377E78
+2025-11-06 11:14:07.777 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 11:14:10.687 IST [54409] @ LOG:  checkpoint complete: wrote 28 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.790 s, sync=0.050 s, total=2.912 s; sync files=35, longest=0.006 s, average=0.002 s; distance=152 kB, estimate=185 kB; lsn=0/5D39E278, redo lsn=0/5D39E240
+2025-11-06 11:17:01.894 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.audit_md5_metadata_tbl;
+2025-11-06 11:17:01.920 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.audit_md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 11:19:07.687 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 11:19:14.652 IST [54409] @ LOG:  checkpoint complete: wrote 67 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=6.863 s, sync=0.044 s, total=6.965 s; sync files=66, longest=0.006 s, average=0.001 s; distance=281 kB, estimate=281 kB; lsn=0/5D3E4A20, redo lsn=0/5D3E49E8
+2025-11-06 12:19:00.219 IST [44097] jagdish_pandre@postgres LOG:  disconnection: session time: 1:29:09.846 user=jagdish_pandre database=postgres host=127.0.0.1 port=50231
+2025-11-06 12:19:00.231 IST [44098] jagdish_pandre@postgres LOG:  disconnection: session time: 1:29:09.801 user=jagdish_pandre database=postgres host=127.0.0.1 port=50232
+2025-11-06 12:19:00.243 IST [44099] jagdish_pandre@test_db LOG:  disconnection: session time: 1:29:09.733 user=jagdish_pandre database=test_db host=127.0.0.1 port=50233
+2025-11-06 12:19:00.261 IST [44100] jagdish_pandre@test_db LOG:  disconnection: session time: 1:29:09.738 user=jagdish_pandre database=test_db host=127.0.0.1 port=50234
+2025-11-06 12:19:00.266 IST [44101] jagdish_pandre@test_db LOG:  disconnection: session time: 1:29:09.697 user=jagdish_pandre database=test_db host=127.0.0.1 port=50235
+2025-11-06 12:19:09.502 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 12:19:10.143 IST [54409] @ LOG:  checkpoint complete: wrote 6 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.624 s, sync=0.001 s, total=0.642 s; sync files=5, longest=0.001 s, average=0.001 s; distance=8 kB, estimate=254 kB; lsn=0/5D3E6A40, redo lsn=0/5D3E6A08
+2025-11-06 12:19:38.277 IST [50925] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=52444
+2025-11-06 12:19:38.279 IST [50925] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 12:19:38.295 IST [50925] jagdish_pandre@postgres LOG:  disconnection: session time: 0:00:00.017 user=jagdish_pandre database=postgres host=127.0.0.1 port=52444
+2025-11-06 12:19:38.298 IST [50926] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=52445
+2025-11-06 12:19:38.300 IST [50926] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 12:19:38.329 IST [50927] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=52446
+2025-11-06 12:19:38.332 IST [50927] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 12:19:38.402 IST [50929] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=52447
+2025-11-06 12:19:38.404 IST [50929] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 12:19:38.412 IST [50930] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=52448
+2025-11-06 12:19:38.414 IST [50930] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 12:19:38.429 IST [50931] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=52449
+2025-11-06 12:19:38.432 IST [50931] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 12:24:09.150 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 12:24:10.097 IST [54409] @ LOG:  checkpoint complete: wrote 9 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.923 s, sync=0.001 s, total=0.948 s; sync files=2, longest=0.001 s, average=0.001 s; distance=29 kB, estimate=232 kB; lsn=0/5D3EDF90, redo lsn=0/5D3EDF58
+2025-11-06 12:27:47.656 IST [50926] jagdish_pandre@postgres LOG:  disconnection: session time: 0:08:09.358 user=jagdish_pandre database=postgres host=127.0.0.1 port=52445
+2025-11-06 12:27:47.672 IST [50927] jagdish_pandre@postgres LOG:  disconnection: session time: 0:08:09.343 user=jagdish_pandre database=postgres host=127.0.0.1 port=52446
+2025-11-06 12:27:47.687 IST [50929] jagdish_pandre@test_db LOG:  disconnection: session time: 0:08:09.284 user=jagdish_pandre database=test_db host=127.0.0.1 port=52447
+2025-11-06 12:27:47.703 IST [50930] jagdish_pandre@test_db LOG:  disconnection: session time: 0:08:09.290 user=jagdish_pandre database=test_db host=127.0.0.1 port=52448
+2025-11-06 12:27:47.714 IST [50931] jagdish_pandre@test_db LOG:  disconnection: session time: 0:08:09.284 user=jagdish_pandre database=test_db host=127.0.0.1 port=52449
+2025-11-06 12:51:57.287 IST [53183] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=53774
+2025-11-06 12:51:57.291 IST [53183] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 12:51:57.306 IST [53183] jagdish_pandre@postgres LOG:  disconnection: session time: 0:00:00.018 user=jagdish_pandre database=postgres host=127.0.0.1 port=53774
+2025-11-06 12:51:57.308 IST [53184] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=53775
+2025-11-06 12:51:57.312 IST [53184] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 12:51:57.340 IST [53185] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=53776
+2025-11-06 12:51:57.343 IST [53185] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 12:51:57.410 IST [53186] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=53777
+2025-11-06 12:51:57.413 IST [53186] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 12:51:57.423 IST [53187] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=53778
+2025-11-06 12:51:57.427 IST [53187] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 12:51:57.452 IST [53188] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=53779
+2025-11-06 12:51:57.455 IST [53188] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 13:04:03.910 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
+2025-11-06 13:04:03.916 IST [52582] jagdish_pandre@test_db ERROR:  cannot drop table pdcd_schema.snapshot_tbl because other objects depend on it
+2025-11-06 13:04:03.916 IST [52582] jagdish_pandre@test_db DETAIL:  constraint md5_metadata_tbl_snapshot_id_fkey on table pdcd_schema.md5_metadata_tbl depends on table pdcd_schema.snapshot_tbl
+	constraint audit_md5_metadata_tbl_snapshot_id_fkey on table pdcd_schema.audit_md5_metadata_tbl depends on table pdcd_schema.snapshot_tbl
+2025-11-06 13:04:03.916 IST [52582] jagdish_pandre@test_db HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2025-11-06 13:04:03.916 IST [52582] jagdish_pandre@test_db STATEMENT:  DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
+2025-11-06 13:04:03.923 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:04:03.930 IST [52582] jagdish_pandre@test_db ERROR:  relation "snapshot_tbl" already exists
+2025-11-06 13:04:03.930 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:04:03.939 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_snapshot_tbl()
+	RETURNS TABLE (
+	    snapshot_id INT,
+	    snapshot_name TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE SQL
+	AS $function$
+	    INSERT INTO pdcd_schema.snapshot_tbl (snapshot_name)
+	    VALUES (
+	        CONCAT_WS('_',
+	            'snapshot',
+	            COALESCE((SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl), 0) + 1,
+	            TO_CHAR(clock_timestamp(), 'YYYY_MM_DD_HH24MISS')
+	        )
+	    )
+	    RETURNING snapshot_id, snapshot_name, processed_time;
+	$function$;
+2025-11-06 13:04:03.939 IST [52582] jagdish_pandre@test_db ERROR:  cannot change return type of existing function
+2025-11-06 13:04:03.939 IST [52582] jagdish_pandre@test_db DETAIL:  Row type defined by OUT parameters is different.
+2025-11-06 13:04:03.939 IST [52582] jagdish_pandre@test_db HINT:  Use DROP FUNCTION pdcd_schema.load_snapshot_tbl() first.
+2025-11-06 13:04:03.939 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.load_snapshot_tbl()
+	RETURNS TABLE (
+	    snapshot_id INT,
+	    snapshot_name TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE SQL
+	AS $function$
+	    INSERT INTO pdcd_schema.snapshot_tbl (snapshot_name)
+	    VALUES (
+	        CONCAT_WS('_',
+	            'snapshot',
+	            COALESCE((SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl), 0) + 1,
+	            TO_CHAR(clock_timestamp(), 'YYYY_MM_DD_HH24MISS')
+	        )
+	    )
+	    RETURNING snapshot_id, snapshot_name, processed_time;
+	$function$;
+2025-11-06 13:04:53.463 IST [52582] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.snapshot_tbl;
+2025-11-06 13:04:53.464 IST [52582] jagdish_pandre@test_db ERROR:  cannot drop table pdcd_schema.snapshot_tbl because other objects depend on it
+2025-11-06 13:04:53.464 IST [52582] jagdish_pandre@test_db DETAIL:  constraint md5_metadata_tbl_snapshot_id_fkey on table pdcd_schema.md5_metadata_tbl depends on table pdcd_schema.snapshot_tbl
+	constraint audit_md5_metadata_tbl_snapshot_id_fkey on table pdcd_schema.audit_md5_metadata_tbl depends on table pdcd_schema.snapshot_tbl
+2025-11-06 13:04:53.464 IST [52582] jagdish_pandre@test_db HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2025-11-06 13:04:53.464 IST [52582] jagdish_pandre@test_db STATEMENT:  drop table pdcd_schema.snapshot_tbl;
+2025-11-06 13:05:09.904 IST [52582] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.audit_md5_metadata_tbl;
+2025-11-06 13:06:02.192 IST [52582] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.md5_metadata_tbl;
+2025-11-06 13:06:06.700 IST [52582] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.snapshot_tbl;
+2025-11-06 13:06:16.838 IST [52582] jagdish_pandre@test_db LOG:  statement: drop function pdcd_schema.load_snapshot_tbl(TEXT[]);
+2025-11-06 13:06:16.839 IST [52582] jagdish_pandre@test_db ERROR:  function pdcd_schema.load_snapshot_tbl(text[]) does not exist
+2025-11-06 13:06:16.839 IST [52582] jagdish_pandre@test_db STATEMENT:  drop function pdcd_schema.load_snapshot_tbl(TEXT[]);
+2025-11-06 13:06:16.839 IST [52582] jagdish_pandre@test_db LOG:  statement: drop function pdcd_schema.load_md5_metadata_tbl(TEXT[]);
+2025-11-06 13:06:16.841 IST [52582] jagdish_pandre@test_db LOG:  statement: drop function pdcd_schema.load_audit_md5_metadata_tbl(TEXT[]);
+2025-11-06 13:07:27.879 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
+2025-11-06 13:07:27.881 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:07:27.906 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_snapshot_tbl()
+	RETURNS TABLE (
+	    snapshot_id INT,
+	    snapshot_name TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE SQL
+	AS $function$
+	    INSERT INTO pdcd_schema.snapshot_tbl (snapshot_name)
+	    VALUES (
+	        CONCAT_WS('_',
+	            'snapshot',
+	            COALESCE((SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl), 0) + 1,
+	            TO_CHAR(clock_timestamp(), 'YYYY_MM_DD_HH24MISS')
+	        )
+	    )
+	    RETURNING snapshot_id, snapshot_name, processed_time;
+	$function$;
+2025-11-06 13:07:27.906 IST [52582] jagdish_pandre@test_db ERROR:  cannot change return type of existing function
+2025-11-06 13:07:27.906 IST [52582] jagdish_pandre@test_db DETAIL:  Row type defined by OUT parameters is different.
+2025-11-06 13:07:27.906 IST [52582] jagdish_pandre@test_db HINT:  Use DROP FUNCTION pdcd_schema.load_snapshot_tbl() first.
+2025-11-06 13:07:27.906 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.load_snapshot_tbl()
+	RETURNS TABLE (
+	    snapshot_id INT,
+	    snapshot_name TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE SQL
+	AS $function$
+	    INSERT INTO pdcd_schema.snapshot_tbl (snapshot_name)
+	    VALUES (
+	        CONCAT_WS('_',
+	            'snapshot',
+	            COALESCE((SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl), 0) + 1,
+	            TO_CHAR(clock_timestamp(), 'YYYY_MM_DD_HH24MISS')
+	        )
+	    )
+	    RETURNING snapshot_id, snapshot_name, processed_time;
+	$function$;
+2025-11-06 13:08:11.137 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "DEFAULT" at character 376
+2025-11-06 13:08:11.137 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) as snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5,
+	            change_type
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5,
+	            'ADDED'
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-06 13:08:36.926 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.md5_metadata_tbl;
+2025-11-06 13:08:36.927 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED'   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	);
+2025-11-06 13:08:36.953 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "DEFAULT" at character 376
+2025-11-06 13:08:36.953 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) as snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5,
+	            change_type
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5,
+	            'ADDED'
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-06 13:09:01.219 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 13:09:08.504 IST [54409] @ LOG:  checkpoint complete: wrote 71 buffers (0.4%); 0 WAL file(s) added, 0 removed, 0 recycled; write=7.218 s, sync=0.030 s, total=7.287 s; sync files=49, longest=0.006 s, average=0.001 s; distance=364 kB, estimate=364 kB; lsn=0/5D449280, redo lsn=0/5D449248
+2025-11-06 13:11:01.754 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.md5_metadata_tbl;
+2025-11-06 13:11:01.771 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
+	  object_type_name TEXT NOT NULL,     -- table/view name
+	  object_subtype TEXT,                -- Column, Index, Trigger, ...
+	  object_subtype_name TEXT,           -- column name or index name
+	  object_subtype_details TEXT,        -- raw detail string
+	  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+	  processed_time TIMESTAMP DEFAULT clock_timestamp(),
+	  change_type TEXT DEFAULT 'ADDED'   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+	);
+2025-11-06 13:11:01.788 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP,
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) as snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5,
+	            change_type
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5,
+	            'ADDED'
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-06 13:12:52.265 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.staging_md5_metadata_tbl;
+2025-11-06 13:12:52.265 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.staging_md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:12:52.282 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_staging_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- Step 1: Truncate before load
+	    TRUNCATE TABLE pdcd_schema.staging_md5_metadata_tbl;
+	
+	    -- Step 2: Generate and load snapshot data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.processed_time AS processed_time
+	        FROM pdcd_schema.snapshot_tbl AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.staging_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.staging_md5_metadata_tbl.metadata_id, 
+	            pdcd_schema.staging_md5_metadata_tbl.snapshot_id, 
+	            pdcd_schema.staging_md5_metadata_tbl.schema_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_type, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_type_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype_details, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-06 13:12:52.284 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "FROM" at character 2539
+2025-11-06 13:12:52.284 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE OR REPLACE FUNCTION pdcd_schema.load_staging_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- Step 1: Truncate before load
+	    TRUNCATE TABLE pdcd_schema.staging_md5_metadata_tbl;
+	
+	    -- Step 2: Generate and load snapshot data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.processed_time AS processed_time
+	        FROM pdcd_schema.snapshot_tbl AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.staging_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.staging_md5_metadata_tbl.metadata_id, 
+	            pdcd_schema.staging_md5_metadata_tbl.snapshot_id, 
+	            pdcd_schema.staging_md5_metadata_tbl.schema_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_type, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_type_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype_details, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-06 13:13:30.262 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.audit_md5_metadata_tbl;
+2025-11-06 13:13:57.759 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.staging_md5_metadata_tbl;
+2025-11-06 13:13:57.773 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.staging_md5_metadata_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:13:57.788 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_staging_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- Step 1: Truncate before load
+	    TRUNCATE TABLE pdcd_schema.staging_md5_metadata_tbl;
+	
+	    -- Step 2: Generate and load snapshot data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.processed_time AS processed_time
+	        FROM pdcd_schema.snapshot_tbl AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.staging_md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.staging_md5_metadata_tbl.metadata_id, 
+	            pdcd_schema.staging_md5_metadata_tbl.snapshot_id, 
+	            pdcd_schema.staging_md5_metadata_tbl.schema_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_type, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_type_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype_name, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_subtype_details, 
+	            pdcd_schema.staging_md5_metadata_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-06 13:14:01.501 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 13:14:06.699 IST [54409] @ LOG:  checkpoint complete: wrote 50 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=5.139 s, sync=0.019 s, total=5.199 s; sync files=51, longest=0.004 s, average=0.001 s; distance=298 kB, estimate=358 kB; lsn=0/5D493C78, redo lsn=0/5D493C40
+2025-11-06 13:14:49.951 IST [53184] jagdish_pandre@postgres LOG:  disconnection: session time: 0:22:52.642 user=jagdish_pandre database=postgres host=127.0.0.1 port=53775
+2025-11-06 13:14:49.965 IST [53185] jagdish_pandre@postgres LOG:  disconnection: session time: 0:22:52.625 user=jagdish_pandre database=postgres host=127.0.0.1 port=53776
+2025-11-06 13:14:49.977 IST [53186] jagdish_pandre@test_db LOG:  disconnection: session time: 0:22:52.567 user=jagdish_pandre database=test_db host=127.0.0.1 port=53777
+2025-11-06 13:14:49.990 IST [53187] jagdish_pandre@test_db LOG:  disconnection: session time: 0:22:52.567 user=jagdish_pandre database=test_db host=127.0.0.1 port=53778
+2025-11-06 13:14:50.007 IST [53188] jagdish_pandre@test_db LOG:  disconnection: session time: 0:22:52.554 user=jagdish_pandre database=test_db host=127.0.0.1 port=53779
+2025-11-06 13:14:50.020 IST [54867] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=54294
+2025-11-06 13:14:50.028 IST [54867] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 13:14:50.043 IST [54867] jagdish_pandre@postgres LOG:  disconnection: session time: 0:00:00.023 user=jagdish_pandre database=postgres host=127.0.0.1 port=54294
+2025-11-06 13:14:50.045 IST [54868] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=54295
+2025-11-06 13:14:50.049 IST [54868] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 13:14:50.072 IST [54869] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=54296
+2025-11-06 13:14:50.074 IST [54869] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 13:14:50.120 IST [54870] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=54297
+2025-11-06 13:14:50.123 IST [54870] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 13:14:50.168 IST [54871] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=54298
+2025-11-06 13:14:50.173 IST [54871] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 13:14:50.845 IST [54873] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=54299
+2025-11-06 13:14:50.849 IST [54873] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 13:14:50.858 IST [54874] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=54300
+2025-11-06 13:14:50.862 IST [54874] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 13:17:34.331 IST [52582] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.staging_md5_metadata_tbl;
+2025-11-06 13:17:55.888 IST [52582] jagdish_pandre@test_db LOG:  statement: drop function pdcd_schema.load_staging_md5_metadata_tbl(TEXT[]);
+2025-11-06 13:19:01.701 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 13:19:06.254 IST [54409] @ LOG:  checkpoint complete: wrote 45 buffers (0.3%); 0 WAL file(s) added, 0 removed, 0 recycled; write=4.519 s, sync=0.005 s, total=4.554 s; sync files=18, longest=0.002 s, average=0.001 s; distance=215 kB, estimate=343 kB; lsn=0/5D4C99E0, redo lsn=0/5D4C99A8
+2025-11-06 13:20:25.913 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.md5_metadata_staging_tbl;
+2025-11-06 13:20:25.913 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.md5_metadata_staging_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:20:25.931 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_staging_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- Step 1: Truncate before load
+	    TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl;
+	
+	    -- Step 2: Generate and load snapshot data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.processed_time AS processed_time
+	        FROM pdcd_schema.snapshot_tbl AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_staging_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.md5_metadata_staging_tbl.metadata_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.snapshot_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.schema_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_details, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-06 13:20:56.344 IST [52582] jagdish_pandre@test_db ERROR:  column "snapshot_process_time" does not exist at character 323
+2025-11-06 13:20:56.344 IST [52582] jagdish_pandre@test_db QUERY:  
+	    INSERT INTO pdcd_schema.snapshot_tbl (snapshot_name)
+	    VALUES (
+	        CONCAT_WS('_',
+	            'snapshot',
+	            COALESCE((SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl), 0) + 1,
+	            TO_CHAR(clock_timestamp(), 'YYYYMMDD_HH24MISS')
+	        )
+	    )
+	    RETURNING snapshot_id, snapshot_name, snapshot_process_time;
+	
+2025-11-06 13:20:56.344 IST [52582] jagdish_pandre@test_db CONTEXT:  SQL function "load_snapshot_tbl" during startup
+2025-11-06 13:20:56.344 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT * FROM pdcd_schema.load_snapshot_tbl();
+2025-11-06 13:21:50.626 IST [52582] jagdish_pandre@test_db LOG:  statement: drop function pdcd_schema.load_snapshot_tbl(TEXT[]);
+2025-11-06 13:21:50.626 IST [52582] jagdish_pandre@test_db ERROR:  function pdcd_schema.load_snapshot_tbl(text[]) does not exist
+2025-11-06 13:21:50.626 IST [52582] jagdish_pandre@test_db STATEMENT:  drop function pdcd_schema.load_snapshot_tbl(TEXT[]);
+2025-11-06 13:22:05.956 IST [52582] jagdish_pandre@test_db LOG:  statement: drop function pdcd_schema.load_snapshot_tbl()
+	;
+2025-11-06 13:22:25.821 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
+2025-11-06 13:22:25.823 IST [52582] jagdish_pandre@test_db ERROR:  cannot drop table pdcd_schema.snapshot_tbl because other objects depend on it
+2025-11-06 13:22:25.823 IST [52582] jagdish_pandre@test_db DETAIL:  constraint md5_metadata_tbl_snapshot_id_fkey on table pdcd_schema.md5_metadata_tbl depends on table pdcd_schema.snapshot_tbl
+	constraint md5_metadata_staging_tbl_snapshot_id_fkey on table pdcd_schema.md5_metadata_staging_tbl depends on table pdcd_schema.snapshot_tbl
+2025-11-06 13:22:25.823 IST [52582] jagdish_pandre@test_db HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2025-11-06 13:22:25.823 IST [52582] jagdish_pandre@test_db STATEMENT:  DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
+2025-11-06 13:22:25.824 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:22:25.827 IST [52582] jagdish_pandre@test_db ERROR:  relation "snapshot_tbl" already exists
+2025-11-06 13:22:25.827 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:22:25.834 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_snapshot_tbl()
+	RETURNS TABLE (
+	    snapshot_id INT,
+	    snapshot_name TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE SQL
+	AS $function$
+	    INSERT INTO pdcd_schema.snapshot_tbl (snapshot_name)
+	    VALUES (
+	        CONCAT_WS('_',
+	            'snapshot',
+	            COALESCE((SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl), 0) + 1,
+	            TO_CHAR(clock_timestamp(), 'YYYY_MM_DD_HH24MISS')
+	        )
+	    )
+	    RETURNING snapshot_id, snapshot_name, processed_time;
+	$function$;
+2025-11-06 13:22:44.729 IST [52582] jagdish_pandre@test_db LOG:  statement: drop function pdcd_schema.load_snapshot_tbl();
+2025-11-06 13:22:48.531 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
+2025-11-06 13:22:48.532 IST [52582] jagdish_pandre@test_db ERROR:  cannot drop table pdcd_schema.snapshot_tbl because other objects depend on it
+2025-11-06 13:22:48.532 IST [52582] jagdish_pandre@test_db DETAIL:  constraint md5_metadata_tbl_snapshot_id_fkey on table pdcd_schema.md5_metadata_tbl depends on table pdcd_schema.snapshot_tbl
+	constraint md5_metadata_staging_tbl_snapshot_id_fkey on table pdcd_schema.md5_metadata_staging_tbl depends on table pdcd_schema.snapshot_tbl
+2025-11-06 13:22:48.532 IST [52582] jagdish_pandre@test_db HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2025-11-06 13:22:48.532 IST [52582] jagdish_pandre@test_db STATEMENT:  DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
+2025-11-06 13:22:48.533 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:22:48.536 IST [52582] jagdish_pandre@test_db ERROR:  relation "snapshot_tbl" already exists
+2025-11-06 13:22:48.536 IST [52582] jagdish_pandre@test_db STATEMENT:  CREATE TABLE pdcd_schema.snapshot_tbl (
+	  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	  snapshot_name TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:22:48.544 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_snapshot_tbl()
+	RETURNS TABLE (
+	    snapshot_id INT,
+	    snapshot_name TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE SQL
+	AS $function$
+	    INSERT INTO pdcd_schema.snapshot_tbl (snapshot_name)
+	    VALUES (
+	        CONCAT_WS('_',
+	            'snapshot',
+	            COALESCE((SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl), 0) + 1,
+	            TO_CHAR(clock_timestamp(), 'YYYY_MM_DD_HH24MISS')
+	        )
+	    )
+	    RETURNING snapshot_id, snapshot_name, processed_time;
+	$function$;
+2025-11-06 13:24:01.255 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 13:24:10.316 IST [54409] @ LOG:  checkpoint complete: wrote 84 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=8.987 s, sync=0.045 s, total=9.062 s; sync files=56, longest=0.006 s, average=0.001 s; distance=310 kB, estimate=340 kB; lsn=0/5D51E418, redo lsn=0/5D517228
+2025-11-06 13:24:58.246 IST [52582] jagdish_pandre@test_db ERROR:  structure of query does not match function result type
+2025-11-06 13:24:58.246 IST [52582] jagdish_pandre@test_db DETAIL:  Returned type timestamp with time zone does not match expected type timestamp without time zone in column 10.
+2025-11-06 13:24:58.246 IST [52582] jagdish_pandre@test_db CONTEXT:  SQL statement "WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.processed_time AS processed_time
+	        FROM pdcd_schema.snapshot_tbl AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_staging_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.md5_metadata_staging_tbl.metadata_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.snapshot_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.schema_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_details, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name"
+	PL/pgSQL function pdcd_schema.load_md5_metadata_staging_tbl(text[]) line 7 at RETURN QUERY
+2025-11-06 13:24:58.246 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
+2025-11-06 13:29:01.328 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 13:29:02.618 IST [54409] @ LOG:  checkpoint complete: wrote 13 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.246 s, sync=0.013 s, total=1.290 s; sync files=14, longest=0.005 s, average=0.001 s; distance=39 kB, estimate=310 kB; lsn=0/5D521020, redo lsn=0/5D520FE8
+2025-11-06 13:31:48.706 IST [52582] jagdish_pandre@test_db LOG:  statement: drop table pdcd_schema.md5_metadata_staging_tbl cascade;
+2025-11-06 13:31:53.458 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.md5_metadata_staging_tbl;
+2025-11-06 13:31:53.469 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.md5_metadata_staging_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:31:53.488 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_staging_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- Step 1: Truncate before load
+	    TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl;
+	
+	    -- Step 2: Generate and load snapshot data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.processed_time AS processed_time
+	        FROM pdcd_schema.snapshot_tbl AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_staging_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.md5_metadata_staging_tbl.metadata_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.snapshot_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.schema_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_details, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp()::timestamp AS processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-06 13:33:33.716 IST [52582] jagdish_pandre@test_db LOG:  statement: DROP TABLE IF EXISTS pdcd_schema.md5_metadata_staging_tbl;
+2025-11-06 13:33:33.729 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE TABLE pdcd_schema.md5_metadata_staging_tbl (
+	  metadata_id BIGSERIAL PRIMARY KEY,
+	  snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
+	  schema_name TEXT NOT NULL,
+	  object_type TEXT NOT NULL,
+	  object_type_name TEXT NOT NULL,
+	  object_subtype TEXT,
+	  object_subtype_name TEXT,
+	  object_subtype_details TEXT,
+	  object_md5 TEXT NOT NULL,
+	  processed_time TIMESTAMP DEFAULT clock_timestamp()
+	);
+2025-11-06 13:33:33.749 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_staging_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP
+	)
+	LANGUAGE plpgsql
+	AS $function$
+	BEGIN
+	    -- Step 1: Truncate before load
+	    TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl;
+	
+	    -- Step 2: Generate and load snapshot data
+	    RETURN QUERY
+	    WITH new_snapshot AS (
+	        SELECT s.snapshot_id, s.processed_time AS processed_time
+	        FROM pdcd_schema.snapshot_tbl AS s
+	    ),
+	    combined_data AS (
+	        SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_staging_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            c.object_subtype_details,
+	            c.object_md5
+	        FROM combined_data c
+	        CROSS JOIN new_snapshot ns
+	        RETURNING 
+	            pdcd_schema.md5_metadata_staging_tbl.metadata_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.snapshot_id, 
+	            pdcd_schema.md5_metadata_staging_tbl.schema_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_type_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_name, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_subtype_details, 
+	            pdcd_schema.md5_metadata_staging_tbl.object_md5
+	    )
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp()::timestamp AS processed_time
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
+	END;
+	$function$;
+2025-11-06 13:34:01.619 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 13:34:10.561 IST [54409] @ LOG:  checkpoint complete: wrote 85 buffers (0.5%); 0 WAL file(s) added, 0 removed, 0 recycled; write=8.874 s, sync=0.026 s, total=8.943 s; sync files=59, longest=0.005 s, average=0.001 s; distance=414 kB, estimate=414 kB; lsn=0/5D588BE8, redo lsn=0/5D588BB0
+2025-11-06 13:37:13.473 IST [54868] jagdish_pandre@postgres LOG:  disconnection: session time: 0:22:23.427 user=jagdish_pandre database=postgres host=127.0.0.1 port=54295
+2025-11-06 13:37:13.488 IST [54869] jagdish_pandre@postgres LOG:  disconnection: session time: 0:22:23.415 user=jagdish_pandre database=postgres host=127.0.0.1 port=54296
+2025-11-06 13:37:13.503 IST [54870] jagdish_pandre@test_db LOG:  disconnection: session time: 0:22:23.382 user=jagdish_pandre database=test_db host=127.0.0.1 port=54297
+2025-11-06 13:37:13.515 IST [54871] jagdish_pandre@test_db LOG:  disconnection: session time: 0:22:23.347 user=jagdish_pandre database=test_db host=127.0.0.1 port=54298
+2025-11-06 14:32:18.468 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments add column primary_location TEXT;
+2025-11-06 14:32:25.516 IST [59526] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=56835
+2025-11-06 14:32:25.520 IST [59526] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 14:32:25.542 IST [59526] jagdish_pandre@postgres LOG:  disconnection: session time: 0:00:00.026 user=jagdish_pandre database=postgres host=127.0.0.1 port=56835
+2025-11-06 14:32:25.567 IST [59527] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=56836
+2025-11-06 14:32:25.570 IST [59527] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 14:32:25.618 IST [59528] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=56837
+2025-11-06 14:32:25.621 IST [59528] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 14:32:25.677 IST [59529] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=56838
+2025-11-06 14:32:25.679 IST [59529] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 14:32:25.689 IST [59530] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=56839
+2025-11-06 14:32:25.691 IST [59530] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 14:32:25.724 IST [59531] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=56840
+2025-11-06 14:32:25.726 IST [59531] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 14:35:45.348 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 14:35:48.073 IST [54409] @ LOG:  checkpoint complete: wrote 27 buffers (0.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.688 s, sync=0.007 s, total=2.726 s; sync files=11, longest=0.003 s, average=0.001 s; distance=71 kB, estimate=380 kB; lsn=0/5D59A888, redo lsn=0/5D59A850
+2025-11-06 14:57:41.205 IST [52582] jagdish_pandre@test_db ERROR:  relation "md5_metadata_staging_tbl" does not exist at character 536
+2025-11-06 14:57:41.205 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(array['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(array['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(array['analytics_schema'])
+	)
+	SELECT
+	    c.schema_name,
+	    c.object_type,
+	    c.object_type_name,
+	    c.object_subtype,
+	    c.object_subtype_name,
+	    c.object_subtype_details,
+	    c.object_md5,
+	    'ADDED' AS change_type
+	FROM current_md5_metadata_cte c
+	LEFT JOIN md5_metadata_staging_tbl s
+	  ON s.schema_name = c.schema_name
+	 AND s.object_type = c.object_type
+	 AND s.object_type_name = c.object_type_name
+	 AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	 AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	WHERE s.object_md5 IS NULL
+	ORDER BY c.schema_name, c.object_type_name, c.object_subtype_name;
+2025-11-06 15:01:11.683 IST [59527] jagdish_pandre@postgres LOG:  disconnection: session time: 0:28:46.116 user=jagdish_pandre database=postgres host=127.0.0.1 port=56836
+2025-11-06 15:01:11.698 IST [59528] jagdish_pandre@postgres LOG:  disconnection: session time: 0:28:46.080 user=jagdish_pandre database=postgres host=127.0.0.1 port=56837
+2025-11-06 15:01:11.711 IST [59529] jagdish_pandre@test_db LOG:  disconnection: session time: 0:28:46.034 user=jagdish_pandre database=test_db host=127.0.0.1 port=56838
+2025-11-06 15:01:11.724 IST [59530] jagdish_pandre@test_db LOG:  disconnection: session time: 0:28:46.035 user=jagdish_pandre database=test_db host=127.0.0.1 port=56839
+2025-11-06 15:01:11.739 IST [59531] jagdish_pandre@test_db LOG:  disconnection: session time: 0:28:46.015 user=jagdish_pandre database=test_db host=127.0.0.1 port=56840
+2025-11-06 15:14:03.200 IST [62585] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=58139
+2025-11-06 15:14:03.204 IST [62585] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 15:14:03.218 IST [62585] jagdish_pandre@postgres LOG:  disconnection: session time: 0:00:00.017 user=jagdish_pandre database=postgres host=127.0.0.1 port=58139
+2025-11-06 15:14:03.220 IST [62586] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=58140
+2025-11-06 15:14:03.223 IST [62586] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 15:14:03.245 IST [62587] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=58141
+2025-11-06 15:14:03.248 IST [62587] jagdish_pandre@postgres LOG:  connection authorized: user=jagdish_pandre database=postgres
+2025-11-06 15:14:03.315 IST [62588] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=58142
+2025-11-06 15:14:03.318 IST [62588] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 15:14:03.326 IST [62589] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=58143
+2025-11-06 15:14:03.329 IST [62589] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 15:14:03.349 IST [62590] [unknown]@[unknown] LOG:  connection received: host=127.0.0.1 port=58144
+2025-11-06 15:14:03.353 IST [62590] jagdish_pandre@test_db LOG:  connection authorized: user=jagdish_pandre database=test_db
+2025-11-06 15:30:05.196 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments rename column dept_name to department_name;
+2025-11-06 15:34:41.520 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 15:34:42.501 IST [54409] @ LOG:  checkpoint complete: wrote 10 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.949 s, sync=0.004 s, total=0.983 s; sync files=8, longest=0.002 s, average=0.001 s; distance=11 kB, estimate=343 kB; lsn=0/5D59D4C0, redo lsn=0/5D59D488
+2025-11-06 15:38:07.837 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "modified" at character 301
+2025-11-06 15:38:07.837 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	)
+	modified AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name, 
+	        c.object_subtype, 
+	        c.object_subtype_name,
+	        c.object_subtype_details AS object_subtype_details,
+	        -- s.object_subtype_details AS prev_object_subtype_details,
+	        -- s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        'MODIFIED' AS change_type,
+	        clock_timestamp() AS processed_time
+	  FROM current_md5_metadata_cte c
+	  JOIN pdcd_schema.md5_metadata_staging_tbl s
+	    ON  s.schema_name = c.schema_name
+	    AND s.object_type = c.object_type
+	    AND s.object_type_name = c.object_type_name
+	    AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	    AND s.object_md5 = c.object_md5
+	  WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	)
+	SELECT *
+	FROM modified
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 15:40:16.152 IST [62586] jagdish_pandre@postgres LOG:  disconnection: session time: 0:26:12.932 user=jagdish_pandre database=postgres host=127.0.0.1 port=58140
+2025-11-06 15:40:16.191 IST [62587] jagdish_pandre@postgres LOG:  disconnection: session time: 0:26:12.946 user=jagdish_pandre database=postgres host=127.0.0.1 port=58141
+2025-11-06 15:40:16.191 IST [62588] jagdish_pandre@test_db LOG:  disconnection: session time: 0:26:12.876 user=jagdish_pandre database=test_db host=127.0.0.1 port=58142
+2025-11-06 15:40:16.240 IST [62589] jagdish_pandre@test_db LOG:  disconnection: session time: 0:26:12.914 user=jagdish_pandre database=test_db host=127.0.0.1 port=58143
+2025-11-06 15:40:16.241 IST [62590] jagdish_pandre@test_db LOG:  disconnection: session time: 0:26:12.891 user=jagdish_pandre database=test_db host=127.0.0.1 port=58144
+2025-11-06 16:05:35.914 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "FROM" at character 518
+2025-11-06 16:05:35.914 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	deleted AS (
+	  SELECT
+	    s.schema_name,
+	    s.object_type, 
+	    s.object_type_name, 
+	    s.object_subtype, 
+	    s.object_subtype_name,
+	    s.object_subtype_details,
+	    s.object_md5,
+	    'DELETED' AS change_type,
+	  FROM pdcd_schema.md5_metadata_staging_tbl s
+	  LEFT JOIN current_md5_metadata_cte c
+	    ON  c.schema_name = s.schema_name
+	    AND c.object_type = s.object_type
+	    AND c.object_type_name = s.object_type_name
+	    AND COALESCE(c.object_subtype, '') = COALESCE(s.object_subtype, '')
+	    AND COALESCE(c.object_subtype_name, '') = COALESCE(s.object_subtype_name, '')
+	  WHERE c.object_md5 IS NULL
+	)
+	SELECT *
+	FROM deleted
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 16:06:34.552 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "FROM" at character 518
+2025-11-06 16:06:34.552 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	deleted AS (
+	  SELECT
+	    s.schema_name,
+	    s.object_type, 
+	    s.object_type_name, 
+	    s.object_subtype, 
+	    s.object_subtype_name,
+	    s.object_subtype_details,
+	    s.object_md5,
+	    'DELETED' AS change_type,
+	  FROM pdcd_schema.md5_metadata_staging_tbl s
+	  LEFT JOIN current_md5_metadata_cte c
+	    ON  c.schema_name = s.schema_name
+	    AND c.object_type = s.object_type
+	    AND c.object_type_name = s.object_type_name
+	    AND COALESCE(c.object_subtype, '') = COALESCE(s.object_subtype, '')
+	    AND COALESCE(c.object_subtype_name, '') = COALESCE(s.object_subtype_name, '')
+	  WHERE c.object_md5 IS NULL
+	)
+	SELECT *
+	FROM deleted
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 16:08:58.065 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "FROM" at character 518
+2025-11-06 16:08:58.065 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	deleted AS (
+	  SELECT
+	    s.schema_name,
+	    s.object_type, 
+	    s.object_type_name, 
+	    s.object_subtype, 
+	    s.object_subtype_name,
+	    s.object_subtype_details,
+	    s.object_md5,
+	    'DELETED' AS change_type,
+	  FROM pdcd_schema.md5_metadata_staging_tbl s
+	  LEFT JOIN current_md5_metadata_cte c
+	    ON  c.schema_name = s.schema_name
+	    AND c.object_type = s.object_type
+	    AND c.object_type_name = s.object_type_name
+	    AND COALESCE(c.object_subtype, '') = COALESCE(s.object_subtype, '')
+	    AND COALESCE(c.object_subtype_name, '') = COALESCE(s.object_subtype_name, '')
+	  WHERE c.object_md5 IS NULL
+	)
+	SELECT *
+	FROM deleted
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 16:25:01.716 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "deleted" at character 1000
+2025-11-06 16:25:01.716 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL 
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	renamed AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_subtype_details AS object_subtype_details,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	  FROM current_md5_metadata_cte c
+	  JOIN pdcd_schema.md5_metadata_staging_tbl s
+	    ON  s.schema_name = c.schema_name
+	    AND s.object_type = c.object_type
+	    AND s.object_type_name = c.object_type_name
+	    AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	    AND s.object_md5 = c.object_md5
+	  WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	)
+	deleted AS (
+	    SELECT
+	        s.schema_name, 
+	        s.object_type, 
+	        s.object_type_name,
+	        s.object_subtype,
+	        s.object_subtype_name,
+	        s.object_subtype_details,
+	        s.object_md5,
+	        'DELETED' AS change_type
+	    FROM pdcd_schema.md5_metadata_staging_tbl s
+	    LEFT JOIN current_md5_metadata_cte c
+	        ON  c.schema_name = s.schema_name
+	        AND c.object_type = s.object_type
+	        AND c.object_type_name = s.object_type_name
+	        AND COALESCE(c.object_subtype, '') = COALESCE(s.object_subtype, '')
+	        AND COALESCE(c.object_subtype_name, '') = COALESCE(s.object_subtype_name, '')
+	    WHERE c.object_md5 IS NULL
+	      AND s.object_md5 NOT IN (SELECT object_md5 FROM renamed)
+	)
+	SELECT *
+	FROM deleted
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 17:29:06.022 IST [52582] jagdish_pandre@test_db ERROR:  relation "renamed" does not exist at character 1597
+2025-11-06 17:29:06.022 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	-- 🟢 Step 1: Detect renamed objects (same MD5 but name changed)
+	renamed_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        -- c.object_subtype_details,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	  FROM current_md5_metadata_cte c
+	  JOIN pdcd_schema.md5_metadata_staging_tbl s
+	    ON  s.schema_name = c.schema_name
+	    AND s.object_type = c.object_type
+	    AND s.object_type_name = c.object_type_name
+	    AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	    AND s.object_md5 = c.object_md5
+	  WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	)
+	,
+	-- 🟢 Step 2: Detect new objects (MD5 not seen before and not part of renamed)
+	added_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'ADDED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON s.object_md5 = c.object_md5
+	    WHERE s.object_md5 IS NULL
+	      AND c.object_md5 NOT IN (SELECT object_md5 FROM renamed)
+	)
+	SELECT * FROM added_objects
+	UNION ALL
+	SELECT * FROM renamed_objects
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 17:34:40.620 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "drop" at character 41
+2025-11-06 17:34:40.620 IST [52582] jagdish_pandre@test_db STATEMENT:  drop table analytics_schema.departments drop primary key;
+2025-11-06 17:36:27.930 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop constraint departments_pkey;
+2025-11-06 17:36:29.956 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 17:36:30.730 IST [54409] @ LOG:  checkpoint complete: wrote 8 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.743 s, sync=0.004 s, total=0.775 s; sync files=8, longest=0.003 s, average=0.001 s; distance=33 kB, estimate=312 kB; lsn=0/5D5A59A8, redo lsn=0/5D5A5938
+2025-11-06 17:41:29.742 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 17:41:30.210 IST [54409] @ LOG:  checkpoint complete: wrote 4 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.438 s, sync=0.002 s, total=0.469 s; sync files=4, longest=0.001 s, average=0.001 s; distance=7 kB, estimate=282 kB; lsn=0/5D5A77E0, redo lsn=0/5D5A77A8
+2025-11-06 17:46:29.212 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 17:46:29.341 IST [54409] @ LOG:  checkpoint complete: wrote 1 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.106 s, sync=0.001 s, total=0.130 s; sync files=1, longest=0.001 s, average=0.001 s; distance=8 kB, estimate=254 kB; lsn=0/5D5A9890, redo lsn=0/5D5A9858
+2025-11-06 17:50:06.332 IST [52582] jagdish_pandre@test_db ERROR:  each UNION query must have the same number of columns at character 2671
+2025-11-06 17:50:06.332 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	
+	-- 🟢 Step 1: Detect RENAMED objects (same MD5, different name)
+	renamed_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        s.object_subtype_name AS old_object_subtype_name,
+	        c.object_subtype_name AS new_object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND s.object_md5 = c.object_md5
+	    WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	),
+	
+	-- 🟠 Step 2: Detect MODIFIED objects (same name, different MD5)
+	modified_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        s.object_md5 AS old_object_md5,
+	        c.object_md5 AS new_object_md5,
+	        clock_timestamp() AS processed_time,
+	        'MODIFIED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	),
+	
+	-- 🟣 Step 3: Detect ADDED objects (MD5 not in previous stage)
+	added_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'ADDED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON s.object_md5 = c.object_md5
+	    WHERE s.object_md5 IS NULL
+	      AND c.object_md5 NOT IN (SELECT new_object_md5 FROM modified_objects)
+	      AND c.object_md5 NOT IN (SELECT object_md5 FROM renamed_objects)
+	)
+	
+	-- 🧾 Final unified output
+	SELECT * FROM renamed_objects
+	UNION ALL
+	SELECT * FROM modified_objects
+	UNION ALL
+	SELECT * FROM added_objects
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 17:51:43.176 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "renamed_objects" at character 1
+2025-11-06 17:51:43.176 IST [52582] jagdish_pandre@test_db STATEMENT:  renamed_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND s.object_md5 = c.object_md5
+	    WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	),
+	
+	-- 🟠 Step 2: Detect MODIFIED objects (same name, different MD5)
+	modified_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'MODIFIED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	),
+	
+	-- 🟣 Step 3: Detect ADDED objects (MD5 not in previous stage)
+	added_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'ADDED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON s.object_md5 = c.object_md5
+	    WHERE s.object_md5 IS NULL
+	      AND c.object_md5 NOT IN (SELECT new_object_md5 FROM modified_objects)
+	      AND c.object_md5 NOT IN (SELECT object_md5 FROM renamed_objects)
+	)
+	
+	-- 🧾 Final unified output
+	SELECT * FROM renamed_objects
+	UNION ALL
+	SELECT * FROM modified_objects
+	UNION ALL
+	SELECT * FROM added_objects
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 17:52:22.820 IST [52582] jagdish_pandre@test_db ERROR:  column "new_object_md5" does not exist at character 2302
+2025-11-06 17:52:22.820 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	
+	-- 🟢 Step 1: Detect RENAMED objects (same MD5, different name)
+	renamed_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND s.object_md5 = c.object_md5
+	    WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	),
+	
+	-- 🟠 Step 2: Detect MODIFIED objects (same name, different MD5)
+	modified_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'MODIFIED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	),
+	
+	-- 🟣 Step 3: Detect ADDED objects (MD5 not in previous stage)
+	added_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'ADDED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON s.object_md5 = c.object_md5
+	    WHERE s.object_md5 IS NULL
+	      AND c.object_md5 NOT IN (SELECT new_object_md5 FROM modified_objects)
+	      AND c.object_md5 NOT IN (SELECT object_md5 FROM renamed_objects)
+	)
+	
+	-- 🧾 Final unified output
+	SELECT * FROM renamed_objects
+	UNION ALL
+	SELECT * FROM modified_objects
+	UNION ALL
+	SELECT * FROM added_objects
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 18:09:06.968 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "SELECT" at character 2892
+2025-11-06 18:09:06.968 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	
+	-- Step 1: Detect renamed objects (same MD5 but name changed)
+	renamed_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        NULL::text AS prev_object_subtype_details,
+	        NULL::text AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND s.object_md5 = c.object_md5
+	    WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	),
+	
+	-- Step 2: Detect modified objects (same object but MD5 changed)
+	modified_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        s.object_subtype_details AS prev_object_subtype_details,
+	        c.object_subtype_details AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'MODIFIED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	),
+	
+	-- Step 3: Detect new (added) objects (not seen before)
+	added_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        NULL::text AS prev_object_subtype_details,
+	        c.object_subtype_details AS new_object_subtype_details,
+	        NULL::text AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'ADDED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON s.object_md5 = c.object_md5
+	    WHERE s.object_md5 IS NULL
+	      AND c.object_md5 NOT IN (SELECT object_md5 FROM renamed_objects UNION SELECT object_md5 FROM modified_objects)
+	),
+	unified_object(
+	    -- Final unified output
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM added_objects
+	    UNION ALL
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM renamed_objects
+	    UNION ALL
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM modified_objects
+	)
+	SELECT *
+	FROM unified_object 
+	WHERE object_subtype = 'Column'
+	ORDER BY schema_name, object_type_name, object_subtype_name;
+2025-11-06 18:11:16.682 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "renamed_objects" at character 1
+2025-11-06 18:11:16.682 IST [52582] jagdish_pandre@test_db STATEMENT:  renamed_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        NULL::text AS prev_object_subtype_details,
+	        NULL::text AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND s.object_md5 = c.object_md5
+	    WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	),
+	
+	-- Step 2: Detect modified objects (same object but MD5 changed)
+	modified_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        s.object_subtype_details AS prev_object_subtype_details,
+	        c.object_subtype_details AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'MODIFIED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	),
+	
+	-- Step 3: Detect new (added) objects (not seen before)
+	added_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        NULL::text AS prev_object_subtype_details,
+	        c.object_subtype_details AS new_object_subtype_details,
+	        NULL::text AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'ADDED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON s.object_md5 = c.object_md5
+	    WHERE s.object_md5 IS NULL
+	      AND c.object_md5 NOT IN (SELECT object_md5 FROM renamed_objects UNION SELECT object_md5 FROM modified_objects)
+	),
+	unified_object(
+	    -- Final unified output
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM added_objects
+	    UNION ALL
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM renamed_objects
+	    UNION ALL
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM modified_objects
+	)
+	SELECT *
+	FROM unified_object u
+	WHERE u.object_subtype = 'Column'
+	ORDER BY u.schema_name, u.object_type_name, u.object_subtype_name;
+2025-11-06 18:53:03.858 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 18:53:04.105 IST [54409] @ LOG:  checkpoint complete: wrote 3 buffers (0.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.218 s, sync=0.003 s, total=0.249 s; sync files=3, longest=0.002 s, average=0.001 s; distance=2 kB, estimate=229 kB; lsn=0/5D5AA420, redo lsn=0/5D5AA3E8
+2025-11-06 19:05:07.881 IST [52582] jagdish_pandre@test_db ERROR:  relation "pdcd_schema.md5_metadata_stagtbl" does not exist at character 188
+2025-11-06 19:05:07.881 IST [52582] jagdish_pandre@test_db STATEMENT:  SELECT 
+	metadata_id,
+	snapshot_id,
+	schema_name,
+	object_type,
+	object_type_name,
+	object_subtype,
+	object_subtype_name,
+	-- object_subtype_details,
+	object_md5,
+	processed_time,
+	change_type
+	FROM pdcd_schema.md5_metadata_stagtbl
+	WHERE schema_name = 'analytics_schema';
+2025-11-06 19:07:04.201 IST [52582] jagdish_pandre@test_db LOG:  statement: ALTER TABLE analytics_schema.departments
+	ADD CONSTRAINT departments_pkey PRIMARY KEY (department_id);
+2025-11-06 19:08:03.108 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 19:08:05.547 IST [54409] @ LOG:  checkpoint complete: wrote 24 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=2.407 s, sync=0.013 s, total=2.440 s; sync files=23, longest=0.007 s, average=0.001 s; distance=107 kB, estimate=217 kB; lsn=0/5D5C5028, redo lsn=0/5D5C4FF0
+2025-11-06 19:20:41.581 IST [52582] jagdish_pandre@test_db LOG:  statement: alter table analytics_schema.departments drop column department_id ;
+2025-11-06 19:23:03.564 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 19:23:05.274 IST [54409] @ LOG:  checkpoint complete: wrote 17 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.673 s, sync=0.005 s, total=1.710 s; sync files=13, longest=0.002 s, average=0.001 s; distance=59 kB, estimate=201 kB; lsn=0/5D5D3EA8, redo lsn=0/5D5D3E70
+2025-11-06 19:34:37.620 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near ";" at character 3830
+2025-11-06 19:34:37.620 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	
+	-- Step 1: Detect renamed objects (same MD5 but name changed)
+	renamed_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        NULL::text AS prev_object_subtype_details,
+	        NULL::text AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND s.object_md5 = c.object_md5
+	    WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	),
+	
+	-- Step 2: Detect modified objects (same object but MD5 changed)
+	modified_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        s.object_subtype_details AS prev_object_subtype_details,
+	        c.object_subtype_details AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'MODIFIED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	),
+	
+	-- Step 3: Detect new (added) objects (not seen before)
+	added_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        NULL::text AS prev_object_subtype_details,
+	        c.object_subtype_details AS new_object_subtype_details,
+	        NULL::text AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'ADDED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON s.object_md5 = c.object_md5
+	    WHERE s.object_md5 IS NULL
+	      AND c.object_md5 NOT IN (SELECT object_md5 FROM renamed_objects UNION SELECT object_md5 FROM modified_objects)
+	),
+	-- Step 4: Detect deleted objects (present in staging but missing in current)
+	deleted_objects AS (
+	    SELECT
+	        s.schema_name,
+	        s.object_type,
+	        s.object_type_name,
+	        s.object_subtype,
+	        s.object_subtype_name,
+	        s.object_subtype_details AS prev_object_subtype_details,
+	        NULL::text AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        NULL::text AS object_md5,
+	        clock_timestamp() AS processed_time,
+	        'DELETED' AS change_type
+	    FROM pdcd_schema.md5_metadata_staging_tbl s
+	    LEFT JOIN current_md5_metadata_cte c
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE c.object_md5 IS NULL AND s.object_md5 NOT IN (SELECT prev_object_md5 FROM renamed_objects);
+	),
+	-- Final unified output
+	unified_object AS (
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM added_objects
+	    UNION ALL
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM renamed_objects
+	    UNION ALL
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM modified_objects
+	)
+	SELECT *
+	FROM unified_object u
+	WHERE u.object_subtype = 'Column'
+	ORDER BY u.schema_name, u.object_type_name, u.object_subtype_name;
+2025-11-06 19:35:48.678 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "renamed_objects" at character 1
+2025-11-06 19:35:48.678 IST [52582] jagdish_pandre@test_db STATEMENT:  renamed_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        NULL::text AS prev_object_subtype_details,
+	        NULL::text AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'RENAMED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND s.object_md5 = c.object_md5
+	    WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	),
+	
+	-- Step 2: Detect modified objects (same object but MD5 changed)
+	modified_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        s.object_subtype_details AS prev_object_subtype_details,
+	        c.object_subtype_details AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'MODIFIED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	),
+	
+	-- Step 3: Detect new (added) objects (not seen before)
+	added_objects AS (
+	    SELECT
+	        c.schema_name,
+	        c.object_type,
+	        c.object_type_name,
+	        c.object_subtype,
+	        c.object_subtype_name,
+	        NULL::text AS prev_object_subtype_details,
+	        c.object_subtype_details AS new_object_subtype_details,
+	        NULL::text AS prev_object_md5,
+	        c.object_md5,
+	        clock_timestamp() AS processed_time,
+	        'ADDED' AS change_type
+	    FROM current_md5_metadata_cte c
+	    LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	      ON s.object_md5 = c.object_md5
+	    WHERE s.object_md5 IS NULL
+	      AND c.object_md5 NOT IN (SELECT object_md5 FROM renamed_objects UNION SELECT object_md5 FROM modified_objects)
+	),
+	-- Step 4: Detect deleted objects (present in staging but missing in current)
+	deleted_objects AS (
+	    SELECT
+	        s.schema_name,
+	        s.object_type,
+	        s.object_type_name,
+	        s.object_subtype,
+	        s.object_subtype_name,
+	        s.object_subtype_details AS prev_object_subtype_details,
+	        NULL::text AS new_object_subtype_details,
+	        s.object_md5 AS prev_object_md5,
+	        NULL::text AS object_md5,
+	        clock_timestamp() AS processed_time,
+	        'DELETED' AS change_type
+	    FROM pdcd_schema.md5_metadata_staging_tbl s
+	    LEFT JOIN current_md5_metadata_cte c
+	      ON  s.schema_name = c.schema_name
+	      AND s.object_type = c.object_type
+	      AND s.object_type_name = c.object_type_name
+	      AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	      AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	    WHERE c.object_md5 IS NULL --AND s.object_md5 NOT IN (SELECT prev_object_md5 FROM renamed_objects)
+	),
+	-- Final unified output
+	unified_object AS (
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM added_objects
+	    UNION ALL
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM renamed_objects
+	    UNION ALL
+	    SELECT schema_name, object_type, object_type_name,
+	        object_subtype, object_subtype_name,
+	        -- new_object_subtype_details as object_subtype_details,
+	        object_md5,
+	        processed_time,
+	        change_type
+	    FROM modified_objects
+	)
+	SELECT *
+	FROM unified_object u
+	ORDER BY u.schema_name, u.object_type_name, u.object_subtype_name;
+2025-11-06 20:44:05.164 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "SELECT" at character 312
+2025-11-06 20:44:05.164 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    -- SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    -- UNION ALL
+	    -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    -- UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	SELECT
+	    s.schema_name,
+	    s.object_type,
+	    s.object_type_name,
+	    s.object_subtype,
+	    s.object_subtype_name,
+	    s.object_subtype_details AS prev_object_subtype_details,
+	    NULL::text AS new_object_subtype_details,
+	    s.object_md5 AS prev_object_md5,
+	    NULL::text AS object_md5,
+	    clock_timestamp() AS processed_time,
+	    'DELETED' AS change_type
+	FROM pdcd_schema.md5_metadata_staging_tbl s
+	LEFT JOIN current_md5_metadata_cte c
+	    ON  s.schema_name = c.schema_name
+	    AND s.object_type = c.object_type
+	    AND s.object_type_name = c.object_type_name
+	    AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	    AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	WHERE c.object_md5 IS NULL;
+2025-11-06 20:44:34.657 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "SELECT" at character 312
+2025-11-06 20:44:34.657 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    -- SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    -- UNION ALL
+	    -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    -- UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	SELECT
+	    s.schema_name,
+	    s.object_type,
+	    s.object_type_name,
+	    s.object_subtype,
+	    s.object_subtype_name,
+	    s.object_subtype_details,
+	    s.object_md5,
+	    clock_timestamp() AS processed_time,
+	    'DELETED' AS change_type
+	FROM pdcd_schema.md5_metadata_staging_tbl s
+	LEFT JOIN current_md5_metadata_cte c
+	    ON  s.schema_name = c.schema_name
+	    AND s.object_type = c.object_type
+	    AND s.object_type_name = c.object_type_name
+	    AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	    AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	WHERE c.object_md5 IS NULL
+	;
+2025-11-06 20:46:52.044 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "SELECT" at character 312
+2025-11-06 20:46:52.044 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    -- SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    -- UNION ALL
+	    -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    -- UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	),
+	SELECT
+	    s.schema_name,
+	    s.object_type,
+	    s.object_type_name,
+	    s.object_subtype,
+	    s.object_subtype_name,
+	    s.object_subtype_details,
+	    s.object_md5
+	    -- clock_timestamp() AS processed_time,
+	    -- 'DELETED' AS change_type
+	FROM pdcd_schema.md5_metadata_staging_tbl s
+	LEFT JOIN current_md5_metadata_cte c
+	    ON  s.schema_name = c.schema_name
+	    AND s.object_type = c.object_type
+	    AND s.object_type_name = c.object_type_name
+	    AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	    AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	WHERE c.object_md5 IS NULL;
+2025-11-06 20:47:12.452 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "(" at character 495
+2025-11-06 20:47:12.452 IST [52582] jagdish_pandre@test_db STATEMENT:  WITH current_md5_metadata_cte AS (
+	    -- SELECT * FROM pdcd_schema.get_table_md5(ARRAY['analytics_schema'])
+	    -- UNION ALL
+	    -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(ARRAY['analytics_schema'])
+	    -- UNION ALL
+	    SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
+	)
+	SELECT
+	    s.schema_name,
+	    s.object_type,
+	    s.object_type_name,
+	    s.object_subtype,
+	    s.object_subtype_name,
+	    s.object_subtype_details,
+	    s.object_md5
+	    clock_timestamp() AS processed_time,
+	    'DELETED' AS change_type
+	FROM pdcd_schema.md5_metadata_staging_tbl s
+	LEFT JOIN current_md5_metadata_cte c
+	    ON  s.schema_name = c.schema_name
+	    AND s.object_type = c.object_type
+	    AND s.object_type_name = c.object_type_name
+	    AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	    AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	WHERE c.object_md5 IS NULL;
+2025-11-06 22:11:06.286 IST [52582] jagdish_pandre@test_db LOG:  statement: CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_md5_metadata_tbl(
+	    p_table_list TEXT[] DEFAULT NULL
+	)
+	RETURNS TABLE (
+	    metadata_id BIGINT,
+	    snapshot_id INTEGER,
+	    schema_name TEXT,
+	    object_type TEXT,
+	    object_type_name TEXT,
+	    object_subtype TEXT,
+	    object_subtype_name TEXT,
+	    object_subtype_details TEXT,
+	    object_md5 TEXT,
+	    processed_time TIMESTAMP,
+	    change_type TEXT
+	)
+	LANGUAGE SQL
+	AS $function$
+	    WITH new_snapshot AS (
+	        SELECT MAX(snapshot_id) AS snapshot_id
+	        FROM pdcd_schema.snapshot_tbl
+	    ),
+	
+	    current_md5_metadata_cte AS (
+	        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
+	        -- UNION ALL 
+	        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
+	        -- UNION ALL 
+	        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+	    ),
+	
+	    -- Step 1: Detect renamed objects (same MD5 but name changed)
+	    renamed_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'RENAMED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND s.object_md5 = c.object_md5
+	        WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+	    ),
+	
+	    -- Step 2: Detect modified objects (same object, MD5 changed)
+	    modified_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            c.object_md5,
+	            'MODIFIED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+	    ),
+	
+	    -- Step 3: Detect newly added objects
+	    added_objects AS (
+	        SELECT
+	            c.schema_name,
+	            c.object_type,
+	            c.object_type_name,
+	            c.object_subtype,
+	            c.object_subtype_name,
+	            NULL::text AS prev_object_subtype_details,
+	            c.object_subtype_details AS new_object_subtype_details,
+	            NULL::text AS prev_object_md5,
+	            c.object_md5,
+	            'ADDED' AS change_type
+	        FROM current_md5_metadata_cte c
+	        LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
+	          ON s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE s.object_md5 IS NULL
+	    ),
+	
+	    -- Step 4: Detect deleted objects (exist in staging but missing in current)
+	    deleted_objects AS (
+	        SELECT
+	            s.schema_name,
+	            s.object_type,
+	            s.object_type_name,
+	            s.object_subtype,
+	            s.object_subtype_name,
+	            s.object_subtype_details AS prev_object_subtype_details,
+	            NULL::text AS new_object_subtype_details,
+	            s.object_md5 AS prev_object_md5,
+	            NULL::text AS object_md5,
+	            'DELETED' AS change_type
+	        FROM pdcd_schema.md5_metadata_staging_tbl s
+	        LEFT JOIN current_md5_metadata_cte c
+	          ON  s.schema_name = c.schema_name
+	          AND s.object_type = c.object_type
+	          AND s.object_type_name = c.object_type_name
+	          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+	          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+	        WHERE c.object_md5 IS NULL
+	    ),
+	
+	    -- Step 5: Combine all changes
+	    unified_changes AS (
+	        SELECT * FROM added_objects
+	        UNION ALL
+	        SELECT * FROM modified_objects
+	        UNION ALL
+	        SELECT * FROM renamed_objects
+	        UNION ALL
+	        SELECT * FROM deleted_objects
+	    ),
+	
+	    -- Step 6: Insert into final table
+	    inserted AS (
+	        INSERT INTO pdcd_schema.md5_metadata_tbl (
+	            snapshot_id,
+	            schema_name,
+	            object_type,
+	            object_type_name,
+	            object_subtype,
+	            object_subtype_name,
+	            object_subtype_details,
+	            object_md5,
+	            change_type
+	        )
+	        SELECT
+	            ns.snapshot_id,
+	            u.schema_name,
+	            u.object_type,
+	            u.object_type_name,
+	            u.object_subtype,
+	            u.object_subtype_name,
+	            COALESCE(u.new_object_subtype_details, u.prev_object_subtype_details),
+	            COALESCE(u.object_md5, u.prev_object_md5),
+	            u.change_type
+	        FROM unified_changes u
+	        CROSS JOIN new_snapshot ns
+	        RETURNING metadata_id, snapshot_id, schema_name, object_type, object_type_name,
+	                  object_subtype, object_subtype_name, object_subtype_details,
+	                  object_md5, change_type
+	    )
+	
+	    SELECT
+	        i.metadata_id,
+	        i.snapshot_id,
+	        i.schema_name,
+	        i.object_type,
+	        i.object_type_name,
+	        i.object_subtype,
+	        i.object_subtype_name,
+	        i.object_subtype_details,
+	        i.object_md5,
+	        clock_timestamp() AS processed_time,
+	        i.change_type
+	    FROM inserted i
+	    JOIN new_snapshot ns ON TRUE
+	    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+	$function$;
+2025-11-06 22:11:31.114 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 22:11:32.209 IST [54409] @ LOG:  checkpoint complete: wrote 11 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.065 s, sync=0.004 s, total=1.097 s; sync files=11, longest=0.002 s, average=0.001 s; distance=26 kB, estimate=183 kB; lsn=0/5D5DA838, redo lsn=0/5D5DA800
+2025-11-06 22:13:53.370 IST [52582] jagdish_pandre@test_db ERROR:  syntax error at or near "SELECT" at character 15
+2025-11-06 22:13:53.370 IST [52582] jagdish_pandre@test_db STATEMENT:  select * from SELECT 
+	schema_name, object_type,
+	 object_type_name,
+	  object_subtype,
+	  object_subtype_name,
+	  object_subtype_details
+	FROM pdcd_schema.md5_metadata_tbl;
+2025-11-06 22:33:06.044 IST [54409] @ LOG:  checkpoint starting: time
+2025-11-06 22:33:07.516 IST [54409] @ LOG:  checkpoint complete: wrote 14 buffers (0.1%); 0 WAL file(s) added, 0 removed, 0 recycled; write=1.419 s, sync=0.029 s, total=1.474 s; sync files=11, longest=0.024 s, average=0.003 s; distance=44 kB, estimate=170 kB; lsn=0/5D5E59B8, redo lsn=0/5D5E5980
+2025-11-07 08:46:13.646 IST [52582] jagdish_pandre@test_db LOG:  statement: drop table analytics_schema.departments ;
