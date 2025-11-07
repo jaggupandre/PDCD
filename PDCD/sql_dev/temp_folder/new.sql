@@ -26,17 +26,28 @@ SELECT * FROM pdcd_schema.load_md5_metadata_tbl(ARRAY['analytics_schema']);
 SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
 
--- Changes after First Run
+-- CHANGES: Renaming, Dropping, Adding columns
 alter table analytics_schema.departments rename column location to location_old; --renaming column
 alter table analytics_schema.departments drop column ternary_location; --dropping column
 alter table analytics_schema.departments add column location_new TEXT; --adding new column
--- alter table analytics_schema.departments alter column department_name type VARCHAR(100); --modifying column
 
 
 -- Second Run and subsequent runs to compare
 SELECT * FROM pdcd_schema.load_snapshot_tbl();
 SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
 SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
+
+-- Changes: Modifying column
+alter table analytics_schema.departments alter column department_name type VARCHAR(100); --modifying column
+
+-- Third Run and subsequent runs to compare
+SELECT * FROM pdcd_schema.load_snapshot_tbl();
+SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
+SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
+
+
 
 SELECT metadata_id, snapshot_id, schema_name, object_type, object_type_name, object_subtype, object_subtype_name,
 -- object_subtype_details,

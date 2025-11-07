@@ -25,14 +25,11 @@ AS $function$
     ),
 
     current_md5_metadata_cte AS (
-        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
-        -- UNION ALL 
-        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
-        -- UNION ALL 
-        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+        SELECT * FROM pdcd_schema.get_table_columns_md5(ARRAY['analytics_schema'])
     ),
 
     -- Step 1: Detect renamed objects (same MD5 but name changed)
+    -- RENAMED: same MD5, different column name
     renamed_objects AS (
         SELECT
             c.schema_name,
@@ -42,16 +39,17 @@ AS $function$
             c.object_subtype_name,
             NULL::text AS prev_object_subtype_details,
             NULL::text AS new_object_subtype_details,
-            s.object_md5 AS prev_object_md5,
-            c.object_md5,
+            s.object_md5   AS prev_object_md5,
+            c.object_md5   AS object_md5,
+            clock_timestamp() AS processed_time,
             'RENAMED' AS change_type
         FROM current_md5_metadata_cte c
         JOIN pdcd_schema.md5_metadata_staging_tbl s
-          ON  s.schema_name = c.schema_name
-          AND s.object_type = c.object_type
-          AND s.object_type_name = c.object_type_name
-          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
-          AND s.object_md5 = c.object_md5
+        ON  s.schema_name = c.schema_name
+        AND s.object_type = c.object_type
+        AND s.object_type_name = c.object_type_name
+        AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+        AND s.object_md5 = c.object_md5
         WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
     ),
 
@@ -66,19 +64,21 @@ AS $function$
             s.object_subtype_details AS prev_object_subtype_details,
             c.object_subtype_details AS new_object_subtype_details,
             s.object_md5 AS prev_object_md5,
-            c.object_md5,
+            c.object_md5 AS object_md5,
+            clock_timestamp() AS processed_time,
             'MODIFIED' AS change_type
         FROM current_md5_metadata_cte c
         JOIN pdcd_schema.md5_metadata_staging_tbl s
-          ON  s.schema_name = c.schema_name
-          AND s.object_type = c.object_type
-          AND s.object_type_name = c.object_type_name
-          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
-          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+        ON  s.schema_name = c.schema_name
+        AND s.object_type = c.object_type
+        AND s.object_type_name = c.object_type_name
+        AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+        AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
         WHERE s.object_md5 IS DISTINCT FROM c.object_md5
     ),
 
     -- Step 3: Detect newly added objects
+    -- ADDED: MD5 not present in staging AND not part of renamed/modified (safety)
     added_objects AS (
         SELECT
             c.schema_name,
@@ -89,19 +89,22 @@ AS $function$
             NULL::text AS prev_object_subtype_details,
             c.object_subtype_details AS new_object_subtype_details,
             NULL::text AS prev_object_md5,
-            c.object_md5,
+            c.object_md5 AS object_md5,
+            clock_timestamp() AS processed_time,
             'ADDED' AS change_type
         FROM current_md5_metadata_cte c
         LEFT JOIN pdcd_schema.md5_metadata_staging_tbl s
-          ON s.schema_name = c.schema_name
-          AND s.object_type = c.object_type
-          AND s.object_type_name = c.object_type_name
-          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
-          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+        ON s.object_md5 = c.object_md5
         WHERE s.object_md5 IS NULL
+        AND c.object_md5 NOT IN (
+            SELECT prev_object_md5 FROM renamed_objects
+            UNION
+            SELECT prev_object_md5 FROM modified_objects
+        )
     ),
 
     -- Step 4: Detect deleted objects (exist in staging but missing in current)
+    -- DELETED: present in staging but missing in current AND NOT renamed/modified
     deleted_objects AS (
         SELECT
             s.schema_name,
@@ -113,15 +116,22 @@ AS $function$
             NULL::text AS new_object_subtype_details,
             s.object_md5 AS prev_object_md5,
             NULL::text AS object_md5,
+            clock_timestamp() AS processed_time,
             'DELETED' AS change_type
         FROM pdcd_schema.md5_metadata_staging_tbl s
         LEFT JOIN current_md5_metadata_cte c
-          ON  s.schema_name = c.schema_name
-          AND s.object_type = c.object_type
-          AND s.object_type_name = c.object_type_name
-          AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
-          AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
+        ON  s.schema_name = c.schema_name
+        AND s.object_type = c.object_type
+        AND s.object_type_name = c.object_type_name
+        AND COALESCE(s.object_subtype, '') = COALESCE(c.object_subtype, '')
+        AND COALESCE(s.object_subtype_name, '') = COALESCE(c.object_subtype_name, '')
         WHERE c.object_md5 IS NULL
+        AND NOT EXISTS (
+            SELECT 1 FROM renamed_objects r WHERE r.prev_object_md5 = s.object_md5
+        )
+        AND NOT EXISTS (
+            SELECT 1 FROM modified_objects m WHERE m.prev_object_md5 = s.object_md5
+        )
     ),
 
     -- Step 5: Combine all changes
@@ -183,7 +193,7 @@ AS $function$
 $function$;
 
 
--- \i '/Users/jagdish_pandre/PDCD/sql_dev/load_compare/compare_load_md5_metadata_tbl.sql'
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/compare_load_md5_metadata_tbl.sql'
 
 
 -- md5_metadata_tbl

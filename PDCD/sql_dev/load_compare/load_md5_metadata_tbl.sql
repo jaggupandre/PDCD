@@ -40,10 +40,7 @@ AS $function$
         FROM pdcd_schema.snapshot_tbl
     ),
     combined_data AS (
-        -- SELECT * FROM pdcd_schema.get_table_md5(p_table_list)
-        -- UNION ALL 
-        -- SELECT * FROM pdcd_schema.get_table_all_columns_md5(p_table_list)
-        -- UNION ALL 
+
         SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
     ),
     inserted AS (
@@ -91,7 +88,7 @@ AS $function$
     ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
 $function$;
 
--- \i '/Users/jagdish_pandre/PDCD/sql_dev/Objects/load_md5_metadata_tbl.sql'
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/load_md5_metadata_tbl.sql'
 
 
 -- md5_metadata_tbl
