@@ -38,11 +38,14 @@ RETURNS TABLE (
 LANGUAGE SQL
 AS $function$
     WITH new_snapshot AS (
-        SELECT snapshot_id, processed_time AS processed_time
+        SELECT snapshot_id, processed_time
         FROM pdcd_schema.snapshot_tbl
+        ORDER BY snapshot_id DESC
+        LIMIT 1   -- only latest snapshot
     ),
     combined_data AS (
-        SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+        SELECT DISTINCT *  -- avoid duplicates from md5 function
+        FROM pdcd_schema.get_table_columns_md5(p_table_list)
     ),
     inserted AS (
         INSERT INTO pdcd_schema.md5_metadata_staging_tbl (
@@ -80,10 +83,10 @@ AS $function$
         i.object_subtype_name,
         i.object_subtype_details,
         i.object_md5,
-        ns.processed_time   -- ✅ added this
+        ns.processed_time
     FROM inserted i
     JOIN new_snapshot ns ON TRUE
-    ORDER BY i.schema_name, i.object_type_name, i.object_subtype;
+    ORDER BY i.schema_name, i.object_type_name, i.object_subtype_name;
 $function$;
 
 
