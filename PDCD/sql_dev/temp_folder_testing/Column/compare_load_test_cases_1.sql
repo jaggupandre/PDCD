@@ -202,9 +202,11 @@ test_db=# select * from pdcd_schema.md5_metadata_tbl;
           28 |           7 | analytics_schema | Table       | departments      | Column         | active_status       | data_type:boolean,max_length:,numeric_precision:,numeric_scale:,nullable:YES,default_value:true,is_identity:NO,is_generated:NEVER,generation_expression:,constraint_name:,ordinal_position:12                                                                                 | 32725f541bfbd0de9ea4ac4817444b96 | 2025-11-12 18:24:02.083235 | DELETED
 
 
-test_db=# select
+test_db=# 
+select
     metadata_id,
     snapshot_id,
+    object_type_name,
     object_subtype_name,
     object_md5,
     processed_time,
