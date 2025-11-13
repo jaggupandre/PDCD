@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION pdcd_schema.get_table_constraints_md5(
 RETURNS TABLE(
     schema_name TEXT,
     object_type TEXT,
-    object_name TEXT,
+    object_type_name TEXT,
     object_subtype TEXT,
     object_subtype_name TEXT,
     object_subtype_details TEXT,
@@ -17,7 +17,7 @@ BEGIN
     SELECT
         gtd.schema_name,
         'Table' AS object_type,
-        gtd.table_name AS object_name,
+        gtd.table_name AS object_type_name,
         'Constraint' AS object_subtype,
         gtd.constraint_name AS object_subtype_name,
         -- Build column details for tracking changes
