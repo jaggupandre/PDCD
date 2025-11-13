@@ -12,9 +12,12 @@ VALUES (
 )
 RETURNING snapshot_id;
 
--- pdcd_schema.md5_metadata_table
-DROP TABLE IF EXISTS pdcd_schema.md5_metadata_table;
-CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
+
+--=================================================
+-- Table: pdcd_schema.md5_metadata_tbl
+--=================================================
+DROP TABLE IF EXISTS pdcd_schema.md5_metadata_tbl;
+CREATE TABLE pdcd_schema.md5_metadata_tbl (
   metadata_id BIGSERIAL PRIMARY KEY,
   snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
   schema_name TEXT NOT NULL,
@@ -25,19 +28,34 @@ CREATE TABLE IF NOT EXISTS pdcd_schema.md5_metadata_table (
   object_subtype_details TEXT,        -- raw detail string
   object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
   processed_time TIMESTAMP DEFAULT clock_timestamp(),
-  change_type TEXT DEFAULT 'ADDED',   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
+  change_type TEXT DEFAULT 'ADDED'   -- ADDED | MODIFIED | UNCHANGED | DELETED (we'll use ADDED/MODIFIED/DELETED on insert)
 );
 
-CREATE TABLE IF NOT EXISTS pdcd_schema.audit_md5_metadata_tbl (
-  metadata_id TEXT PRIMARY KEY,
+--=================================================
+-- Table: pdcd_schema.md5_metadata_staging_tbl
+--=================================================
+DROP TABLE IF EXISTS pdcd_schema.md5_metadata_staging_tbl;
+CREATE TABLE pdcd_schema.md5_metadata_staging_tbl (
+  metadata_id BIGSERIAL PRIMARY KEY,
   snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
   schema_name TEXT NOT NULL,
-  object_type TEXT NOT NULL,          -- TABLE, VIEW, FUNCTION, ...
-  object_type_name TEXT NOT NULL,     -- table/view name
-  object_subtype TEXT,                -- Column, Index, Trigger, ...
-  object_subtype_name TEXT,           -- column name or index name
-  object_subtype_details TEXT,        -- raw detail string
-  object_md5 TEXT NOT NULL,           -- md5 fingerprint of the object_subtype_details (or full row)
+  object_type TEXT NOT NULL,
+  object_type_name TEXT NOT NULL,
+  object_subtype TEXT,
+  object_subtype_name TEXT,
+  object_subtype_details TEXT,
+  object_md5 TEXT NOT NULL,
   processed_time TIMESTAMP DEFAULT clock_timestamp()
 );
 -- ==============================================================
+
+Create schema back_up_schema;
+
+CREATE TABLE back_up_schema.md5_metadata_tbl AS
+SELECT *
+FROM pdcd_schema.md5_metadata_tbl;
+
+CREATE TABLE back_up_schema.md5_metadata_staging_tbl AS
+SELECT *
+FROM pdcd_schema.md5_metadata_staging_tbl;
+

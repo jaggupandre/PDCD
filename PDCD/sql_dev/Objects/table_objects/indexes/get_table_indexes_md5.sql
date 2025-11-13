@@ -1,0 +1,53 @@
+CREATE OR REPLACE FUNCTION get_table_indexes_md5(
+    p_table_list TEXT[] DEFAULT NULL
+)
+RETURNS TABLE(
+    schema_name TEXT,
+    object_type TEXT,
+    object_name TEXT,
+    object_subtype TEXT,
+    object_subtype_name TEXT,
+    object_subtype_details TEXT,
+    object_md5 TEXT
+)
+LANGUAGE plpgsql
+AS $function$
+BEGIN
+    RETURN QUERY
+    SELECT
+        gid.schema_name,
+        'Table' AS object_type,
+        gid.table_name AS object_name,
+        'Index' AS object_subtype,
+        gid.index_name AS object_subtype_name,
+        concat_ws(
+                ',',
+                -- coalesce(gid.index_name, ''),
+                'tablespace:' || coalesce(gid.tablespace, ''),
+                'indexdef:' || coalesce(gid.indexdef, '')
+            ) as object_subtype_details,
+        md5(
+            concat_ws(
+                ':',
+                coalesce(gid.schema_name, ''),
+                coalesce(gid.table_name, ''),
+                coalesce(gid.index_name, ''),
+                coalesce(gid.tablespace, ''),
+                coalesce(gid.indexdef, '')
+            )
+        ) AS object_md5
+    FROM get_index_details(p_table_list) gid
+    ORDER BY gid.schema_name, gid.table_name, gid.index_name;
+END;
+$function$;
+
+
+
+drop function get_table_indexes_md5(TEXT[]);
+SELECT * FROM get_table_indexes_md5(ARRAY['companies.employees']);
+
+
+SELECT * FROM get_table_indexes_md5();
+SELECT * FROM get_table_indexes_md5(ARRAY['public','legacy']);
+SELECT * FROM get_table_all_get_table_indexes_md5indexes_md5(ARRAY['public.people','sales.region_sales_west']);
+
