@@ -44,8 +44,10 @@ AS $function$
         LIMIT 1   -- only latest snapshot
     ),
     combined_data AS (
-        SELECT DISTINCT *  -- avoid duplicates from md5 function
-        FROM pdcd_schema.get_table_columns_md5(p_table_list)
+        SELECT DISTINCT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
+        UNION ALL
+        SELECT DISTINCT * FROM pdcd_schema.get_table_constraints_md5(p_table_list)
+
     ),
     inserted AS (
         INSERT INTO pdcd_schema.md5_metadata_staging_tbl (

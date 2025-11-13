@@ -1,6 +1,4 @@
-
-
--- Main metadata load function, load_md5_metadata_tbl
+-- Refactored metadata change detection function
 CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_md5_metadata_tbl(
     p_table_list TEXT[] DEFAULT NULL
 )
@@ -15,7 +13,10 @@ RETURNS TABLE (
     object_subtype_details TEXT,
     object_md5 TEXT,
     processed_time TIMESTAMP,
-    change_type TEXT
+    change_type TEXT,
+    prev_object_subtype_name TEXT,
+    prev_object_subtype_details TEXT,
+    prev_object_md5 TEXT
 )
 LANGUAGE SQL
 AS $function$
@@ -214,7 +215,7 @@ AS $function$
             change_type
     )
     
-    -- Step 7: Return results without previous values
+    -- Step 7: Return results with full audit trail
     SELECT
         i.metadata_id,
         i.snapshot_id,
@@ -226,8 +227,18 @@ AS $function$
         i.object_subtype_details,
         i.object_md5,
         pc.processed_time,
-        i.change_type
+        i.change_type,
+        u.prev_object_subtype_name,
+        u.prev_object_subtype_details,
+        u.prev_object_md5
     FROM inserted i
+    INNER JOIN unified_changes u
+        ON i.schema_name = u.schema_name
+        AND i.object_type = u.object_type
+        AND i.object_type_name = u.object_type_name
+        AND i.object_subtype = u.object_subtype
+        AND i.object_subtype_name = u.object_subtype_name
+        AND i.change_type = u.change_type
     CROSS JOIN processing_context pc
     ORDER BY 
         i.schema_name, 
@@ -235,13 +246,3 @@ AS $function$
         i.object_subtype_name,
         i.change_type;
 $function$;
-
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/compare_load_md5_metadata_tbl.sql'
-
-
--- md5_metadata_tbl
-
--- SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
-
--- SELECT * FROM pdcd_schema.load_snapshot_tbl();
--- SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);

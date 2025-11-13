@@ -7,8 +7,7 @@ RETURNS TABLE(
     constraint_name TEXT,
     constraint_type TEXT,
     column_name TEXT,
-    definition TEXT,
-    object_subtype_details TEXT
+    definition TEXT
 )
 LANGUAGE sql
 AS $function$
@@ -67,31 +66,7 @@ AS $function$
             ),
             ','
         ) AS column_name,
-        pg_get_constraintdef(con.oid, true)::TEXT AS definition,
-        -- Build metadata string using CONCAT_WS for clarity
-        CONCAT_WS(
-            ',',
-            CONCAT('constraint_type:', CASE con.contype
-                WHEN 'p' THEN 'PRIMARY KEY'
-                WHEN 'u' THEN 'UNIQUE'
-                WHEN 'f' THEN 'FOREIGN KEY'
-                WHEN 'c' THEN 'CHECK'
-                WHEN 'x' THEN 'EXCLUDE'
-                ELSE con.contype::TEXT
-            END),
-            CONCAT('columns:', array_to_string(
-                ARRAY(
-                    SELECT att.attname
-                    FROM unnest(con.conkey) AS colnum
-                    JOIN pg_attribute att 
-                      ON att.attrelid = con.conrelid 
-                     AND att.attnum = colnum
-                    ORDER BY att.attnum
-                ),
-                '|'
-            )),
-            CONCAT('definition:', pg_get_constraintdef(con.oid, true)::TEXT)
-        ) AS object_subtype_details
+        pg_get_constraintdef(con.oid, true)::TEXT AS definition
     FROM pg_constraint con
     JOIN pg_class t ON t.oid = con.conrelid
     JOIN pg_namespace n ON n.oid = t.relnamespace
@@ -106,6 +81,7 @@ $function$;
 -- SELECT * FROM pdcd_schema.get_constraint_details();
 -- SELECT * FROM pdcd_schema.get_constraint_details(ARRAY['analytics_schema']);
 -- SELECT * FROM pdcd_schema.get_constraint_details(ARRAY['analytics_schema.departments']);
+-- SELECT * FROM pdcd_schema.get_constraint_details(ARRAY['analytics_schema.employees']);
 
 
 -- SELECT * FROM pdcd_schema.get_constraint_details(ARRAY['public', 'legacy']);

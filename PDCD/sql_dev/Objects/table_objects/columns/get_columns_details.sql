@@ -16,7 +16,6 @@ RETURNS TABLE (
     generation_expression TEXT,
     constraint_name TEXT,
     ordinal_position INT
-    -- object_subtype_details TEXT
 )
 LANGUAGE SQL
 AS $function$
@@ -43,25 +42,6 @@ AS $function$
         c.generation_expression,
         tc.constraint_name,
         c.ordinal_position AS ordinal_position
-
-        -- Build metadata string using CONCAT_WS for clarity
-        -- CONCAT_WS(
-        --     ',',
-        --     -- CONCAT('schema_name:', COALESCE(c.table_schema, '')),
-        --     -- CONCAT('table_name:', COALESCE(c.table_name, '')),
-        --     -- CONCAT('column_name:', COALESCE(c.column_name, '')),
-        --     CONCAT('data_type:', COALESCE(c.data_type, '')),
-        --     CONCAT('max_length:', COALESCE(c.character_maximum_length::TEXT, '')),
-        --     CONCAT('numeric_precision:', COALESCE(c.numeric_precision::TEXT, '')),
-        --     CONCAT('numeric_scale:', COALESCE(c.numeric_scale::TEXT, '')),
-        --     CONCAT('nullable:', COALESCE(c.is_nullable, '')),
-        --     CONCAT('default_value:', COALESCE(c.column_default, '')),
-        --     CONCAT('is_identity:', COALESCE(c.is_identity, '')),
-        --     CONCAT('is_generated:', COALESCE(c.is_generated, '')),
-        --     CONCAT('generation_expression:', COALESCE(c.generation_expression, '')),
-        --     CONCAT('constraint_name:', COALESCE(tc.constraint_name, '')),
-        --     CONCAT('ordinal_position:', c.ordinal_position::TEXT)
-        -- ) AS object_subtype_details
 
     FROM information_schema.columns c
     LEFT JOIN information_schema.key_column_usage tc
