@@ -6,10 +6,14 @@ drop table pdcd_schema.snapshot_tbl;
 drop table pdcd_schema.md5_metadata_tbl;
 drop table pdcd_schema.md5_metadata_staging_tbl;
 
+TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
+TRUNCATE TABLE pdcd_schema.md5_metadata_tbl RESTART IDENTITY CASCADE;
 TRUNCATE TABLE pdcd_schema.snapshot_tbl RESTART IDENTITY CASCADE;
-TRUNCATE TABLE pdcd_schema.md5_metadata_tbl RESTART IDENTITY CASCADE;
-TRUNCATE TABLE pdcd_schema.md5_metadata_tbl RESTART IDENTITY CASCADE;
 
+--- =============================
+--- ========= TEST CASES ========
+--- =============================
+ 
 DROP table IF EXISTS analytics_schema.departments;
 CREATE TABLE analytics_schema.departments (
     department_id SERIAL PRIMARY KEY,
@@ -19,11 +23,25 @@ CREATE TABLE analytics_schema.departments (
     manager_id INT,
     budget_code VARCHAR(50)
 );
+-- DROP table IF EXISTS analytics_schema.employees;
+-- CREATE TABLE analytics_schema.employees (
+--     employee_id SERIAL PRIMARY KEY,
+--     first_name VARCHAR(100) NOT NULL,
+--     last_name VARCHAR(100),
+--     email VARCHAR(150) UNIQUE NOT NULL,
+--     phone_number VARCHAR(20),
+--     hire_date DATE NOT NULL DEFAULT CURRENT_DATE,
+--     salary NUMERIC(10,2),
+--     department_id INT NOT NULL REFERENCES analytics_schema.departments(department_id)
+-- );
+
 
 -- First Run
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
     SELECT * FROM pdcd_schema.load_md5_metadata_tbl(ARRAY['analytics_schema']);
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
+
+ SELECT * FROM pdcd_schema.   
  metadata_id | snapshot_id |   schema_name    | object_type | object_type_name | object_subtype | object_subtype_name |                                                                                                                            object_subtype_details                                                                                                                             |            object_md5            |       processed_time       | change_type
 -------------+-------------+------------------+-------------+------------------+----------------+---------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------+----------------------------+-------------
            1 |           1 | analytics_schema | Table       | departments      | Column         | department_id       | data_type:integer,max_length:,numeric_precision:32,numeric_scale:0,nullable:NO,default_value:nextval('analytics_schema.departments_department_id_seq'::regclass),is_identity:NO,is_generated:NEVER,generation_expression:,constraint_name:departments_pkey,ordinal_position:1 | 57cdd3e718f6f0349c77a716434d09f8 | 2025-11-12 18:12:50.064149 | ADDED

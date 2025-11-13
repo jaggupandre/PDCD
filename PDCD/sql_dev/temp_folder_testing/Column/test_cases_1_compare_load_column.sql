@@ -6,8 +6,9 @@ drop table pdcd_schema.snapshot_tbl;
 drop table pdcd_schema.md5_metadata_tbl;
 drop table pdcd_schema.md5_metadata_staging_tbl;
 
-TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
+
 TRUNCATE TABLE pdcd_schema.md5_metadata_tbl RESTART IDENTITY CASCADE;
+TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
 TRUNCATE TABLE pdcd_schema.snapshot_tbl RESTART IDENTITY CASCADE;
 
 DROP table IF EXISTS analytics_schema.departments;
@@ -40,7 +41,7 @@ ALTER TABLE analytics_schema.departments ALTER COLUMN department_name TYPE VARCH
 ALTER TABLE analytics_schema.departments ALTER COLUMN main_location SET DEFAULT 'Head Office';
 --  Purpose: initial schema growth + default and data type changes.
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
  
@@ -64,7 +65,7 @@ ALTER TABLE analytics_schema.departments ADD COLUMN last_updated_by TEXT;
 ALTER TABLE analytics_schema.departments ADD COLUMN budget_allocated NUMERIC(12,2);
 --  Purpose: check detection of renames and new column additions in same run.
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
  metadata_id | snapshot_id |   schema_name    | object_type | object_type_name | object_subtype | object_subtype_name |                                                                                                                            object_subtype_details                                                                                                                             |            object_md5            |       processed_time       | change_type
@@ -91,7 +92,7 @@ ALTER TABLE analytics_schema.departments RENAME COLUMN last_updated_by TO update
 ALTER TABLE analytics_schema.departments ALTER COLUMN updated_by SET DEFAULT CURRENT_USER;
 --  Purpose: test multiple attribute updates (type, default, rename).
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
  metadata_id | snapshot_id |   schema_name    | object_type | object_type_name | object_subtype | object_subtype_name |                                                                                                                            object_subtype_details                                                                                                                             |            object_md5            |       processed_time       | change_type
@@ -122,7 +123,7 @@ ALTER TABLE analytics_schema.departments ADD COLUMN total_employees INTEGER;
 ALTER TABLE analytics_schema.departments ADD COLUMN active_status BOOLEAN DEFAULT TRUE;
 --  Purpose: test column removal + re-creation patterns — very common in evolution.
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 test_db=# select * from pdcd_schema.md5_metadata_tbl;
@@ -158,7 +159,7 @@ ALTER TABLE analytics_schema.departments DROP COLUMN active_status;
 ALTER TABLE analytics_schema.departments ADD COLUMN remarks TEXT;
 --  Purpose: simulate rename + modify + drop + add together — final full-cycle test.
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 

@@ -36,3 +36,27 @@ CREATE TABLE analytics_schema.employees (
 -- | FK         | department_id → departments(department_id)  | FOREIGN KEY          |
 
 -- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/temp_folder_testing/Constraints/new_test_0.sql'
+
+--- =============================
+--- ========= TEST CASES ========
+--- =============================
+ 
+CREATE TABLE analytics_schema.departments (
+    department_id SERIAL PRIMARY KEY,
+    department_name VARCHAR(100) NOT NULL,
+    main_location VARCHAR(100),
+    ternary_location VARCHAR(100),
+    manager_id INT,
+    budget_code VARCHAR(50)
+);
+
+CREATE TABLE analytics_schema.employees (
+    employee_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100),
+    email VARCHAR(150) UNIQUE NOT NULL,
+    phone_number VARCHAR(20),
+    hire_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    salary NUMERIC(10,2),
+    department_id INT NOT NULL REFERENCES analytics_schema.departments(department_id)
+);

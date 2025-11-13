@@ -1,6 +1,5 @@
-
--- Column metadata change detection and load function (Column subtype only)
-CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_column_md5_metadata_tbl(
+-- Constraint metadata change detection and load function
+CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_constraint_metadata_tbl(
     p_table_list TEXT[] DEFAULT NULL
 )
 RETURNS TABLE (
@@ -19,41 +18,43 @@ RETURNS TABLE (
 LANGUAGE SQL
 AS $function$
     WITH processing_context AS (
+        -- Calculate once for consistency
         SELECT 
             (SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl) AS snapshot_id,
             clock_timestamp() AS processed_time
     ),
     
-    -- Get current column metadata
-    current_column_metadata_cte AS (
+    -- Get current constraint metadata
+    current_constraint_metadata_cte AS (
         SELECT 
-            schema_name,
-            object_type,
-            object_type_name,
-            object_subtype,
-            object_subtype_name,
-            object_subtype_details,
-            object_md5
-        FROM pdcd_schema.get_table_columns_md5(p_table_list)
-        WHERE object_subtype = 'Column'
+            c.schema_name,
+            'Table' AS object_type,
+            c.object_type_name,
+            'Constraint' AS object_subtype,
+            c.object_subtype_name,
+            c.object_subtype_details,
+            c.object_md5
+        FROM pdcd_schema.get_table_columns_md5(p_table_list) c
+        WHERE c.object_subtype = 'Constraint'
     ),
     
-    -- Get staging column metadata (previous snapshot)
-    staging_column_metadata_cte AS (
+    -- Get staging constraint metadata (previous snapshot)
+    staging_constraint_metadata_cte AS (
         SELECT 
-            schema_name,
-            object_type,
-            object_type_name,
-            object_subtype,
-            object_subtype_name,
-            object_subtype_details,
-            object_md5
-        FROM pdcd_schema.md5_metadata_staging_tbl
-        WHERE object_subtype = 'Column'
+            s.schema_name,
+            s.object_type,
+            s.object_type_name,
+            s.object_subtype,
+            s.object_subtype_name,
+            s.object_subtype_details,
+            s.object_md5
+        FROM pdcd_schema.md5_metadata_staging_tbl s
+        WHERE s.object_subtype = 'Constraint'
     ),
     
-    -- Step 1: Detect RENAMED columns (same MD5, different column name)
-    renamed_columns AS (
+    -- Step 1: Detect RENAMED constraints (same MD5, different constraint name)
+    -- This happens when a constraint is dropped and recreated with a different name but same definition
+    renamed_constraints AS (
         SELECT
             c.schema_name,
             c.object_type,
@@ -66,18 +67,18 @@ AS $function$
             s.object_subtype_name AS prev_object_subtype_name,
             s.object_subtype_details AS prev_object_subtype_details,
             s.object_md5 AS prev_object_md5
-        FROM current_column_metadata_cte c
-        INNER JOIN staging_column_metadata_cte s
+        FROM current_constraint_metadata_cte c
+        INNER JOIN staging_constraint_metadata_cte s
             ON s.schema_name = c.schema_name
             AND s.object_type = c.object_type
             AND s.object_type_name = c.object_type_name
             AND s.object_subtype = c.object_subtype
-            AND s.object_md5 = c.object_md5
-        WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name
+            AND s.object_md5 = c.object_md5  -- Same definition (MD5)
+        WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name  -- Different constraint name
     ),
     
-    -- Step 2: Detect MODIFIED columns (same column name, different MD5)
-    modified_columns AS (
+    -- Step 2: Detect MODIFIED constraints (same constraint name, different definition/MD5)
+    modified_constraints AS (
         SELECT
             c.schema_name,
             c.object_type,
@@ -90,42 +91,35 @@ AS $function$
             s.object_subtype_name AS prev_object_subtype_name,
             s.object_subtype_details AS prev_object_subtype_details,
             s.object_md5 AS prev_object_md5
-        FROM current_column_metadata_cte c
-        INNER JOIN staging_column_metadata_cte s
+        FROM current_constraint_metadata_cte c
+        INNER JOIN staging_constraint_metadata_cte s
             ON s.schema_name = c.schema_name
             AND s.object_type = c.object_type
             AND s.object_type_name = c.object_type_name
             AND s.object_subtype = c.object_subtype
-            AND s.object_subtype_name = c.object_subtype_name
-        WHERE s.object_md5 IS DISTINCT FROM c.object_md5
+            AND s.object_subtype_name = c.object_subtype_name  -- Same constraint name
+        WHERE s.object_md5 IS DISTINCT FROM c.object_md5  -- Different definition
     ),
     
-    -- ✅ FIX: Mark both old and new names of renamed columns as processed
-    processed_current_columns AS (
+    -- Create exclusion sets for performance
+    processed_current_constraints AS (
         SELECT schema_name, object_type, object_type_name, object_subtype, object_subtype_name
-        FROM renamed_columns
-        UNION
-        SELECT schema_name, object_type, object_type_name, object_subtype, prev_object_subtype_name AS object_subtype_name
-        FROM renamed_columns
+        FROM renamed_constraints
         UNION
         SELECT schema_name, object_type, object_type_name, object_subtype, object_subtype_name
-        FROM modified_columns
+        FROM modified_constraints
     ),
     
-    processed_staging_columns AS (
-        -- include both names so old renamed columns aren’t falsely flagged as deleted
+    processed_staging_constraints AS (
         SELECT schema_name, object_type, object_type_name, object_subtype, object_subtype_name
-        FROM renamed_columns
-        UNION
-        SELECT schema_name, object_type, object_type_name, object_subtype, prev_object_subtype_name AS object_subtype_name
-        FROM renamed_columns
+        FROM renamed_constraints
         UNION
         SELECT schema_name, object_type, object_type_name, object_subtype, object_subtype_name
-        FROM modified_columns
+        FROM modified_constraints
     ),
     
-    -- Step 3: Detect ADDED columns
-    added_columns AS (
+    -- Step 3: Detect ADDED constraints (new constraints not in staging)
+    added_constraints AS (
         SELECT
             c.schema_name,
             c.object_type,
@@ -138,10 +132,10 @@ AS $function$
             NULL::TEXT AS prev_object_subtype_name,
             NULL::TEXT AS prev_object_subtype_details,
             NULL::TEXT AS prev_object_md5
-        FROM current_column_metadata_cte c
+        FROM current_constraint_metadata_cte c
         WHERE NOT EXISTS (
             SELECT 1 
-            FROM staging_column_metadata_cte s
+            FROM staging_constraint_metadata_cte s
             WHERE s.schema_name = c.schema_name
                 AND s.object_type = c.object_type
                 AND s.object_type_name = c.object_type_name
@@ -150,7 +144,7 @@ AS $function$
         )
         AND NOT EXISTS (
             SELECT 1 
-            FROM processed_current_columns p
+            FROM processed_current_constraints p
             WHERE p.schema_name = c.schema_name
                 AND p.object_type = c.object_type
                 AND p.object_type_name = c.object_type_name
@@ -159,8 +153,8 @@ AS $function$
         )
     ),
     
-    -- Step 4: Detect DELETED columns
-    deleted_columns AS (
+    -- Step 4: Detect DELETED constraints (constraints in staging but not in current)
+    deleted_constraints AS (
         SELECT
             s.schema_name,
             s.object_type,
@@ -173,10 +167,10 @@ AS $function$
             s.object_subtype_name AS prev_object_subtype_name,
             s.object_subtype_details AS prev_object_subtype_details,
             s.object_md5 AS prev_object_md5
-        FROM staging_column_metadata_cte s
+        FROM staging_constraint_metadata_cte s
         WHERE NOT EXISTS (
             SELECT 1 
-            FROM current_column_metadata_cte c
+            FROM current_constraint_metadata_cte c
             WHERE c.schema_name = s.schema_name
                 AND c.object_type = s.object_type
                 AND c.object_type_name = s.object_type_name
@@ -185,7 +179,7 @@ AS $function$
         )
         AND NOT EXISTS (
             SELECT 1 
-            FROM processed_staging_columns p
+            FROM processed_staging_constraints p
             WHERE p.schema_name = s.schema_name
                 AND p.object_type = s.object_type
                 AND p.object_type_name = s.object_type_name
@@ -194,15 +188,15 @@ AS $function$
         )
     ),
     
-    -- Step 5: Combine all changes
-    unified_column_changes AS (
-        SELECT * FROM renamed_columns
+    -- Step 5: Combine all constraint changes
+    unified_constraint_changes AS (
+        SELECT * FROM renamed_constraints
         UNION ALL
-        SELECT * FROM modified_columns
+        SELECT * FROM modified_constraints
         UNION ALL
-        SELECT * FROM added_columns
+        SELECT * FROM added_constraints
         UNION ALL
-        SELECT * FROM deleted_columns
+        SELECT * FROM deleted_constraints
     ),
     
     -- Step 6: Insert into metadata table
@@ -228,7 +222,7 @@ AS $function$
             u.object_subtype_details,
             u.object_md5,
             u.change_type
-        FROM unified_column_changes u
+        FROM unified_constraint_changes u
         CROSS JOIN processing_context pc
         RETURNING 
             metadata_id, 
@@ -243,7 +237,7 @@ AS $function$
             change_type
     )
     
-    -- Step 7: Return final result
+    -- Step 7: Return results
     SELECT
         i.metadata_id,
         i.snapshot_id,
@@ -265,13 +259,12 @@ AS $function$
         i.change_type;
 $function$;
 
-
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/compare_load_column_md5_metadata_tbl.sql'
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/compare_load_md5_metadata_tbl.sql'
 
 
 -- md5_metadata_tbl
 
--- SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
+-- SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
 
 -- SELECT * FROM pdcd_schema.load_snapshot_tbl();
--- SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
+-- SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
