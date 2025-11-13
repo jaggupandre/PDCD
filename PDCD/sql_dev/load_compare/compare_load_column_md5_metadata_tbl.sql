@@ -100,7 +100,7 @@ AS $function$
         WHERE s.object_md5 IS DISTINCT FROM c.object_md5
     ),
     
-    -- ✅ FIX: Mark both old and new names of renamed columns as processed
+    -- Mark both old and new names of renamed columns as processed
     processed_current_columns AS (
         SELECT schema_name, object_type, object_type_name, object_subtype, object_subtype_name
         FROM renamed_columns
