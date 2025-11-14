@@ -1,11 +1,3 @@
--- Snapshot table
-DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
-CREATE TABLE pdcd_schema.snapshot_tbl (
-  snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  snapshot_name TEXT NOT NULL,
-  processed_time TIMESTAMP DEFAULT clock_timestamp()
-);
-
 -- Function to create a new snapshot, load_snapshot_tbl
 CREATE OR REPLACE FUNCTION pdcd_schema.load_snapshot_tbl()
 RETURNS TABLE (
