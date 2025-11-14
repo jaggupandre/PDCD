@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_table_indexes_md5(
+CREATE OR REPLACE FUNCTION pdcd_schema.get_table_indexes_md5(
     p_table_list TEXT[] DEFAULT NULL
 )
 RETURNS TABLE(
@@ -17,7 +17,7 @@ BEGIN
     SELECT
         gid.schema_name,
         'Table' AS object_type,
-        gid.table_name AS object_name,
+        gid.table_name AS object_type_name,
         'Index' AS object_subtype,
         gid.index_name AS object_subtype_name,
         concat_ws(
@@ -36,7 +36,7 @@ BEGIN
                 coalesce(gid.indexdef, '')
             )
         ) AS object_md5
-    FROM get_index_details(p_table_list) gid
+    FROM pdcd_schema.get_index_details(p_table_list) gid
     ORDER BY gid.schema_name, gid.table_name, gid.index_name;
 END;
 $function$;
