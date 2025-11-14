@@ -42,8 +42,8 @@ AS $function$
     combined_data AS (
 
         SELECT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
-        -- UNION ALL
-        -- SELECT * FROM pdcd_schema.get_table_contraints_md5(p_table_list)
+        UNION ALL
+        SELECT * FROM pdcd_schema.get_table_constraints_md5(p_table_list)
     ),
     inserted AS (
         INSERT INTO pdcd_schema.md5_metadata_tbl (
