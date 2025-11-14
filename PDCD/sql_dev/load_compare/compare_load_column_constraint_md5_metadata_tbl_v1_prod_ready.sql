@@ -1,7 +1,29 @@
+-- ============================================================================
+-- Combined Metadata Change Detection for Columns and Constraints
+-- ============================================================================
+-- Description:
+--   Compares current database metadata against the previous snapshot (staging)
+--   to detect and record changes in both columns and constraints.
+--
+-- Change Detection Logic:
+--   - RENAMED:  Same MD5 (definition), different name (in same snapshot)
+--   - MODIFIED: Same name, different MD5 (definition changed)
+--   - ADDED:    New object not present in previous snapshot
+--   - DELETED:  Object present in previous snapshot but missing now
+--
+-- Design Note:
+--   Rename detection only works within consecutive snapshots. If an object
+--   is deleted in snapshot N and recreated with a new name in snapshot N+1,
+--   it will be tracked as DELETED then ADDED (not RENAMED). This accurately
+--   reflects the actual database operations performed.
+--
+-- Parameters:
+--   p_table_list - Array of table names to process (NULL = all tables)
+--
+-- Returns:
+--   Table of detected changes with metadata details and change types
+-- ============================================================================
 
--- Combined metadata change detection for both columns and constraints
--- Detects: RENAMED, MODIFIED, ADDED, DELETED changes
--- Handles: Columns (object_subtype='Column') and Constraints (object_subtype='Constraint')
 CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(
     p_table_list TEXT[] DEFAULT NULL
 )
@@ -21,7 +43,7 @@ RETURNS TABLE (
 LANGUAGE SQL
 AS $function$
     WITH processing_context AS (
-        -- Calculate once for consistency
+        -- Calculate snapshot_id and timestamp once for consistency
         SELECT 
             (SELECT MAX(snapshot_id) FROM pdcd_schema.snapshot_tbl) AS snapshot_id,
             clock_timestamp() AS processed_time
@@ -63,8 +85,12 @@ AS $function$
         FROM pdcd_schema.md5_metadata_staging_tbl
     ),
     
+    -- ========================================================================
     -- Step 1: Detect RENAMED objects (same MD5, different name)
-    -- Applies to both columns and constraints
+    -- ========================================================================
+    -- Detects when a column/constraint is renamed within the same snapshot.
+    -- Example: email_address → user_email (same data type and constraints)
+    --          uq_email → uq_user_email (same unique constraint definition)
     renamed_objects AS (
         SELECT
             c.schema_name,
@@ -88,8 +114,12 @@ AS $function$
         WHERE s.object_subtype_name IS DISTINCT FROM c.object_subtype_name  -- Different name
     ),
     
+    -- ========================================================================
     -- Step 2: Detect MODIFIED objects (same name, different definition)
-    -- Applies to both columns and constraints
+    -- ========================================================================
+    -- Detects when a column/constraint definition changes.
+    -- Example: VARCHAR(50) → VARCHAR(100) for email column
+    --          FK without CASCADE → FK with ON DELETE CASCADE
     modified_objects AS (
         SELECT
             c.schema_name,
@@ -113,15 +143,21 @@ AS $function$
         WHERE s.object_md5 IS DISTINCT FROM c.object_md5  -- Different definition
     ),
     
+    -- ========================================================================
     -- Create exclusion sets for performance
-    -- CRITICAL: Include both old and new names of renamed objects
-    -- to prevent false DELETED/ADDED flags
+    -- ========================================================================
+    -- CRITICAL: Include both old and new names of renamed objects to prevent
+    -- false positives where renamed objects are also flagged as ADDED/DELETED.
+    -- 
+    -- Example: column 'email' renamed to 'user_email'
+    --   Without this: Would show as RENAMED + DELETED (email) + ADDED (user_email)
+    --   With this:    Shows only as RENAMED
     processed_current_objects AS (
         -- Current name of renamed objects
         SELECT schema_name, object_type, object_type_name, object_subtype, object_subtype_name
         FROM renamed_objects
         UNION
-        -- Previous name of renamed objects (to exclude from ADDED)
+        -- Previous name of renamed objects (prevents false ADDED detection)
         SELECT schema_name, object_type, object_type_name, object_subtype, prev_object_subtype_name AS object_subtype_name
         FROM renamed_objects
         UNION
@@ -131,7 +167,7 @@ AS $function$
     ),
     
     processed_staging_objects AS (
-        -- Previous name of renamed objects (to exclude from DELETED)
+        -- Previous name of renamed objects (prevents false DELETED detection)
         SELECT schema_name, object_type, object_type_name, object_subtype, object_subtype_name
         FROM renamed_objects
         UNION
@@ -144,7 +180,11 @@ AS $function$
         FROM modified_objects
     ),
     
+    -- ========================================================================
     -- Step 3: Detect ADDED objects (new columns/constraints)
+    -- ========================================================================
+    -- Detects objects that exist in current snapshot but not in previous.
+    -- Example: New column added, new constraint created
     added_objects AS (
         SELECT
             c.schema_name,
@@ -179,7 +219,11 @@ AS $function$
         )
     ),
     
+    -- ========================================================================
     -- Step 4: Detect DELETED objects (removed columns/constraints)
+    -- ========================================================================
+    -- Detects objects that existed in previous snapshot but are now missing.
+    -- Example: Column dropped, constraint removed
     deleted_objects AS (
         SELECT
             s.schema_name,
@@ -214,7 +258,9 @@ AS $function$
         )
     ),
     
+    -- ========================================================================
     -- Step 5: Combine all changes for both columns and constraints
+    -- ========================================================================
     unified_changes AS (
         SELECT * FROM renamed_objects
         UNION ALL
@@ -225,7 +271,9 @@ AS $function$
         SELECT * FROM deleted_objects
     ),
     
+    -- ========================================================================
     -- Step 6: Insert into metadata table
+    -- ========================================================================
     inserted AS (
         INSERT INTO pdcd_schema.md5_metadata_tbl (
             snapshot_id,
@@ -263,7 +311,9 @@ AS $function$
             change_type
     )
     
+    -- ========================================================================
     -- Step 7: Return results for both columns and constraints
+    -- ========================================================================
     SELECT
         i.metadata_id,
         i.snapshot_id,
@@ -286,13 +336,35 @@ AS $function$
         i.change_type;
 $function$;
 
+-- ============================================================================
+-- Usage Examples
+-- ============================================================================
 
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/compare_load_column_constraint_md5_metadata_tbl.sql'
+-- Example 1: Track all changes across all tables
+-- SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl();
 
+-- Example 2: Track changes for specific tables
+-- SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(
+--     ARRAY['employees', 'departments']
+-- );
 
--- md5_metadata_tbl
+-- Example 3: Filter by change type
+-- SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl()
+-- WHERE change_type = 'MODIFIED';
 
--- SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
+-- Example 4: Group changes by object type
+-- SELECT 
+--     object_subtype,
+--     change_type,
+--     COUNT(*) as change_count
+-- FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl()
+-- GROUP BY object_subtype, change_type
+-- ORDER BY object_subtype, change_type;
 
--- SELECT * FROM pdcd_schema.load_snapshot_tbl();
--- SELECT * FROM pdcd_schema.compare_load_column_md5_metadata_tbl(ARRAY['analytics_schema']);
+-- Example 5: View column changes only
+-- SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl()
+-- WHERE object_subtype = 'Column';
+
+-- Example 6: View constraint changes only
+-- SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl()
+-- WHERE object_subtype = 'Constraint';
