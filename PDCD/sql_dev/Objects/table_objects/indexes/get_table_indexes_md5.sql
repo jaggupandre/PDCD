@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION pdcd_schema.get_table_indexes_md5(
 RETURNS TABLE(
     schema_name TEXT,
     object_type TEXT,
-    object_name TEXT,
+    object_type_name TEXT,
     object_subtype TEXT,
     object_subtype_name TEXT,
     object_subtype_details TEXT,
@@ -29,9 +29,9 @@ BEGIN
         md5(
             concat_ws(
                 ':',
-                coalesce(gid.schema_name, ''),
-                coalesce(gid.table_name, ''),
-                coalesce(gid.index_name, ''),
+                -- coalesce(gid.schema_name, ''),
+                -- coalesce(gid.table_name, ''),
+                -- coalesce(gid.index_name, ''),
                 coalesce(gid.tablespace, ''),
                 coalesce(gid.indexdef, '')
             )

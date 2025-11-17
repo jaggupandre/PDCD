@@ -48,6 +48,16 @@ AS $function$
             object_subtype_details,
             object_md5
         FROM pdcd_schema.get_table_constraints_md5(p_table_list)
+        UNION ALL
+        SELECT 
+            schema_name,
+            object_type,
+            object_type_name,
+            object_subtype,
+            object_subtype_name,
+            object_subtype_details,
+            object_md5
+        FROM pdcd_schema.get_table_indexes_md5(p_table_list)
     ),
     
     -- Get staging metadata (previous snapshot) for both columns and constraints
