@@ -34,7 +34,7 @@ BEGIN
             concat_ws(
                 ':',
                 'tablespace:' || coalesce(gid.tablespace, ''),
-                'indexdef:' || coalesce(gid.indexdef, ''),
+                -- 'indexdef:' || coalesce(gid.indexdef, ''),
                 'is_unique:' || coalesce(gid.is_unique::TEXT, ''),
                 'is_primary:' || coalesce(gid.is_primary::TEXT, ''),
                 'index_columns:' || coalesce(gid.index_columns::TEXT, ''),
@@ -49,11 +49,12 @@ $function$;
 
 
 
-drop function get_table_indexes_md5(TEXT[]);
-SELECT * FROM get_table_indexes_md5(ARRAY['companies.employees']);
+-- drop function get_table_indexes_md5(TEXT[]);
+-- SELECT * FROM pdcd_schema.get_table_indexes_md5(ARRAY['analytics_schema']);
+-- SELECT * FROM get_table_indexes_md5(ARRAY['companies.employees']);
 
 
-SELECT * FROM get_table_indexes_md5();
-SELECT * FROM get_table_indexes_md5(ARRAY['public','legacy']);
-SELECT * FROM get_table_all_get_table_indexes_md5indexes_md5(ARRAY['public.people','sales.region_sales_west']);
+-- SELECT * FROM get_table_indexes_md5();
+-- SELECT * FROM get_table_indexes_md5(ARRAY['public','legacy']);
+-- SELECT * FROM get_table_all_get_table_indexes_md5indexes_md5(ARRAY['public.people','sales.region_sales_west']);
 

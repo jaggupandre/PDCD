@@ -84,6 +84,6 @@ $function$;
 
 -- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/Objects/table_objects/indexes/get_index_details.sql'
 
--- SELECT * FROM get_index_details();
+-- SELECT * FROM pdcd_schema.get_index_details();
 -- SELECT * FROM get_index_details(ARRAY['public','legacy']);
 -- SELECT * FROM get_index_details(ARRAY['public.people','sales.region_sales_west']);
