@@ -41,7 +41,7 @@ CREATE TABLE analytics_schema.employees (
     SELECT * FROM pdcd_schema.load_md5_metadata_tbl(ARRAY['analytics_schema']);
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
-select metadata_id, snapshot_id, object_type_name, object_subtype_name, object_subtype_details, object_md5, processed_time, change_type FROM pdcd_schema.md5_metadata_tbl;
+select metadata_id, snapshot_id, object_type_name, object_subtype, object_subtype, object_subtype_name, object_md5, processed_time, change_type FROM pdcd_schema.md5_metadata_tbl;
  metadata_id | snapshot_id | object_type_name |     object_subtype_name      |                                                               object_subtype_details                                                                |            object_md5            |       processed_time       | change_type
 -------------+-------------+------------------+------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------+----------------------------+-------------
            1 |           1 | departments      | departments_pkey             | constraint_type:PRIMARY KEY,column_name:department_id,definition:PRIMARY KEY (department_id)                                                        | 6f00aac61324af405b95307a19340808 | 2025-11-13 21:29:15.268683 | ADDED
