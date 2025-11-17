@@ -22,18 +22,24 @@ BEGIN
         gid.index_name AS object_subtype_name,
         concat_ws(
                 ',',
-                -- coalesce(gid.index_name, ''),
                 'tablespace:' || coalesce(gid.tablespace, ''),
-                'indexdef:' || coalesce(gid.indexdef, '')
+                'indexdef:' || coalesce(gid.indexdef, ''),
+                'is_unique:' || coalesce(gid.is_unique::TEXT, ''),
+                'is_primary:' || coalesce(gid.is_primary::TEXT, ''),
+                'index_columns:' || coalesce(gid.index_columns::TEXT, ''),
+                'index_predicate:' || coalesce(gid.index_predicate::TEXT, ''),
+                'access_method:' || coalesce(gid.access_method::TEXT, '')
             ) as object_subtype_details,
         md5(
             concat_ws(
                 ':',
-                -- coalesce(gid.schema_name, ''),
-                -- coalesce(gid.table_name, ''),
-                -- coalesce(gid.index_name, ''),
-                coalesce(gid.tablespace, ''),
-                coalesce(gid.indexdef, '')
+                'tablespace:' || coalesce(gid.tablespace, ''),
+                'indexdef:' || coalesce(gid.indexdef, ''),
+                'is_unique:' || coalesce(gid.is_unique::TEXT, ''),
+                'is_primary:' || coalesce(gid.is_primary::TEXT, ''),
+                'index_columns:' || coalesce(gid.index_columns::TEXT, ''),
+                'index_predicate:' || coalesce(gid.index_predicate::TEXT, ''),
+                'access_method:' || coalesce(gid.access_method::TEXT, '')
             )
         ) AS object_md5
     FROM pdcd_schema.get_index_details(p_table_list) gid

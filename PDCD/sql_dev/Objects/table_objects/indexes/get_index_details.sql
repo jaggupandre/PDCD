@@ -6,7 +6,12 @@ RETURNS TABLE(
     table_name TEXT,
     index_name TEXT,
     tablespace TEXT,
-    indexdef TEXT
+    indexdef TEXT,
+    is_unique BOOLEAN,
+    is_primary BOOLEAN,
+    index_columns TEXT,
+    index_predicate TEXT,
+    access_method TEXT
 )
 LANGUAGE sql
 AS $function$
@@ -50,12 +55,29 @@ SELECT
     t.relname::TEXT AS table_name,
     i.relname::TEXT AS index_name,
     ts.spcname::TEXT AS tablespace,
-    pg_get_indexdef(i.oid)::TEXT AS indexdef
+    pg_get_indexdef(i.oid)::TEXT AS indexdef,
+    x.indisunique AS is_unique,
+    x.indisprimary AS is_primary,
+    -- Get ordered list of indexed columns
+    array_to_string(
+        ARRAY(
+            SELECT a.attname
+            FROM unnest(x.indkey::int[]) WITH ORDINALITY AS u(attnum, ord)
+            JOIN pg_attribute a ON a.attnum = u.attnum AND a.attrelid = t.oid
+            ORDER BY u.ord
+        ),
+        ','
+    ) AS index_columns,
+    -- Get index predicate (for partial indexes)
+    pg_get_expr(x.indpred, x.indrelid)::TEXT AS index_predicate,
+    -- Get access method (btree, gin, gist, etc.)
+    am.amname::TEXT AS access_method
 FROM pg_class t
 JOIN pg_namespace n ON n.oid = t.relnamespace
 JOIN pg_index x ON x.indrelid = t.oid
 JOIN pg_class i ON i.oid = x.indexrelid
 LEFT JOIN pg_tablespace ts ON ts.oid = i.reltablespace
+JOIN pg_am am ON am.oid = i.relam
 WHERE (n.nspname || '.' || t.relname) IN (SELECT full_table_name FROM input_tables)
 ORDER BY n.nspname, t.relname, i.relname;
 $function$;

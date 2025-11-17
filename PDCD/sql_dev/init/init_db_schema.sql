@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
 CREATE TABLE pdcd_schema.snapshot_tbl (
   snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   snapshot_name TEXT NOT NULL,
-  snapshot_process_time TIMESTAMP DEFAULT clock_timestamp()
+  processed_time TIMESTAMP DEFAULT clock_timestamp()
 );
 INSERT INTO pdcd_schema.snapshot_tbl(snapshot_name)
 VALUES (
