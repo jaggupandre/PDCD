@@ -1,5 +1,7 @@
 -- Initialize the database schema
 -- snapshot table (if not exists)
+DB: test_db
+user: test_user
 DROP TABLE IF EXISTS pdcd_schema.snapshot_tbl;
 CREATE TABLE pdcd_schema.snapshot_tbl (
   snapshot_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
