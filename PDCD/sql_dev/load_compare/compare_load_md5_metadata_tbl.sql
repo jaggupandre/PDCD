@@ -1,8 +1,8 @@
 
--- Combined metadata change detection for both columns and constraints
+-- Combined metadata change detection for both columns, constraints and indexes
 -- Detects: RENAMED, MODIFIED, ADDED, DELETED changes
--- Handles: Columns (object_subtype='Column') and Constraints (object_subtype='Constraint')
-CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(
+
+CREATE OR REPLACE FUNCTION pdcd_schema.compare_load_md5_metadata_tbl(
     p_table_list TEXT[] DEFAULT NULL
 )
 RETURNS TABLE (
@@ -297,7 +297,7 @@ AS $function$
 $function$;
 
 
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/compare_load_column_constraint_md5_metadata_tbl.sql'
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/compare_load_md5_metadata_tbl.sql'
 
 
 -- md5_metadata_tbl

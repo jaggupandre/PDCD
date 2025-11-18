@@ -97,7 +97,7 @@ ALTER TABLE analytics_schema.employees
 
 
 SELECT * FROM pdcd_schema.load_snapshot_tbl();
-SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
 TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
 SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
@@ -173,7 +173,7 @@ ALTER TABLE analytics_schema.employees
     ON DELETE CASCADE;
 
 SELECT * FROM pdcd_schema.load_snapshot_tbl();
-SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
 TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
 SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
@@ -216,7 +216,7 @@ ALTER TABLE analytics_schema.departments
     DROP CONSTRAINT chk_budget_code;
 
 SELECT * FROM pdcd_schema.load_snapshot_tbl();
-SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
 TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
 SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 select metadata_id, snapshot_id, object_type_name, object_subtype, object_subtype_name, object_md5, processed_time, change_type FROM pdcd_schema.md5_metadata_tbl;
@@ -268,7 +268,7 @@ ALTER TABLE analytics_schema.employees
     RENAME CONSTRAINT fk_emp_dept TO fk_employee_department;
 
 SELECT * FROM pdcd_schema.load_snapshot_tbl();
-SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
 TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
 SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
@@ -319,7 +319,7 @@ ALTER TABLE analytics_schema.employees
     ADD CONSTRAINT chk_salary_positive CHECK (employee_id >= 1);
     
 SELECT * FROM pdcd_schema.load_snapshot_tbl();
-SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
 TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
 SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 test_db=# select metadata_id, snapshot_id, object_type_name, object_subtype, object_subtype_name, object_md5, processed_time, change_type FROM pdcd_schema.md5_metadata_tbl;

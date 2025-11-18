@@ -82,7 +82,7 @@ CREATE INDEX idx_employees_lower_email
 -- Expected changes
 -- 4 new entries with object_type = 'INDEX' and change_type = 'ADDED'.
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 
@@ -134,7 +134,7 @@ ALTER INDEX analytics_schema.idx_employees_lower_email
 -- 2 renames (RENAMED)
 -- 2 deletions (DELETED)
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 SELECT snapshot_id, schema_name,object_type_name, object_subtype,    object_subtype_name, object_md5,    processed_time,    change_type
@@ -191,7 +191,7 @@ CREATE INDEX idx_departments_manager_desc
 -- 4 ADDED indexes with different characteristics (filtered, unique, expression, order).
 
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 SELECT snapshot_id, schema_name,object_type_name, object_subtype,    object_subtype_name, object_md5,    processed_time,    change_type
@@ -249,7 +249,7 @@ ALTER INDEX analytics_schema.idx_departments_manager_desc
 -- Expected changes
 -- 2 RENAMED, 1 DELETED, 1 ADDED.
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 SELECT snapshot_id, schema_name,object_type_name, object_subtype,    object_subtype_name, object_md5,    processed_time,    change_type
@@ -314,7 +314,7 @@ CREATE UNIQUE INDEX idx_emp_name_email
 -- Expected changes
 -- Multiple DELETED followed by new ADDED indexes.
     SELECT * FROM pdcd_schema.load_snapshot_tbl();
-    SELECT * FROM pdcd_schema.compare_load_column_constraint_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
     TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
     SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
 SELECT snapshot_id, schema_name,object_type_name, object_subtype,    object_subtype_name, object_md5,    processed_time,    change_type
