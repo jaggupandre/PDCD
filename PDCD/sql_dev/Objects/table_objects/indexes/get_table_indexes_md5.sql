@@ -37,7 +37,7 @@ BEGIN
                 -- 'indexdef:' || coalesce(gid.indexdef, ''),
                 'is_unique:' || coalesce(gid.is_unique::TEXT, ''),
                 'is_primary:' || coalesce(gid.is_primary::TEXT, ''),
-                'index_columns:' || coalesce(gid.index_columns::TEXT, ''),
+                'index_columns:' || coalesce(gid.index_columns::TEXT, ''), -- Column Name
                 'index_predicate:' || coalesce(gid.index_predicate::TEXT, ''),
                 'access_method:' || coalesce(gid.access_method::TEXT, '')
             )
@@ -51,7 +51,8 @@ $function$;
 
 -- drop function get_table_indexes_md5(TEXT[]);
 -- SELECT * FROM pdcd_schema.get_table_indexes_md5(ARRAY['analytics_schema']);
--- SELECT * FROM get_table_indexes_md5(ARRAY['companies.employees']);
+-- SELECT * FROM pdcd_schema.get_table_indexes_md5(ARRAY['analytics_schema.employees']);
+-- SELECT * FROM pdcd_schema.get_table_indexes_md5(ARRAY['analytics_schema.departments']);
 
 
 -- SELECT * FROM get_table_indexes_md5();
