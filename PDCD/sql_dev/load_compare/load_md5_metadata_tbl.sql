@@ -46,6 +46,10 @@ AS $function$
         SELECT * FROM pdcd_schema.get_table_constraints_md5(p_table_list)
         UNION ALL
         SELECT * FROM pdcd_schema.get_table_indexes_md5(p_table_list)
+        UNION ALL
+        SELECT * FROM pdcd_schema.get_table_references_md5(p_table_list)
+        UNION ALL
+        SELECT * FROM pdcd_schema.get_table_triggers_md5(p_table_list)
 
     ),
     inserted AS (
