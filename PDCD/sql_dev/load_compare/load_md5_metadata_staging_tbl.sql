@@ -55,6 +55,8 @@ AS $function$
         SELECT DISTINCT * FROM pdcd_schema.get_table_triggers_md5(p_table_list)
         UNION ALL
         SELECT DISTINCT * FROM pdcd_schema.get_table_sequences_md5(p_table_list)
+        UNION ALL
+        SELECT DISTINCT * FROM pdcd_schema.get_table_functions_md5(p_table_list)
     ),
     inserted AS (
         INSERT INTO pdcd_schema.md5_metadata_staging_tbl (

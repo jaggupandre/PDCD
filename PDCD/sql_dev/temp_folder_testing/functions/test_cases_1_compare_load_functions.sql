@@ -1,3 +1,8 @@
+
+TRUNCATE TABLE pdcd_schema.snapshot_tbl RESTART IDENTITY CASCADE;
+TRUNCATE TABLE pdcd_schema.md5_metadata_tbl RESTART IDENTITY CASCADE;
+TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
+
 CREATE SCHEMA IF NOT EXISTS analytics_schema;
 --==============================
 CREATE TABLE analytics_schema.departments (
@@ -116,3 +121,14 @@ DROP FUNCTION analytics_schema.get_employee_count();
 ALTER FUNCTION analytics_schema.get_employee_count()
 RENAME TO get_total_employee_COUNT;
 
+
+-- First Run
+    SELECT * FROM pdcd_schema.load_snapshot_tbl();
+    SELECT * FROM pdcd_schema.load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
+
+-- Second Run and subsequent runs to compare 
+    SELECT * FROM pdcd_schema.load_snapshot_tbl();
+    SELECT * FROM pdcd_schema.compare_load_md5_metadata_tbl(ARRAY['analytics_schema']);
+    TRUNCATE TABLE pdcd_schema.md5_metadata_staging_tbl RESTART IDENTITY CASCADE;
+    SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
