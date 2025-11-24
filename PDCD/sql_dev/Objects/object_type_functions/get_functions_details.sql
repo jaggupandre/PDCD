@@ -53,22 +53,16 @@ AS $function$
         CASE
             WHEN l.lanname = 'sql' THEN
                 regexp_replace(trim(p.prosrc), '\s+', ' ', 'g')
-
             WHEN l.lanname = 'plpgsql' THEN
                 regexp_replace(
                     regexp_replace(
                         regexp_replace(
-                            regexp_replace(
-                                pg_get_functiondef(p.oid),
-                                '.*?(DECLARE|BEGIN)(.*)END;?',
-                                '\1\2',
-                                'nsi'
-                            ),
-                            '\$[^$]*\$\s*$',
-                            '',
+                            pg_get_functiondef(p.oid),
+                            '.*?(DECLARE|BEGIN)(.*?)END;?\s*\$[^$]*\$.*$',
+                            '\1\2',
                             'nsi'
                         ),
-                        '\s*RETURN\s+[^;]+;?',
+                        '\s*RETURN\s+[^;]+;?\s*$',
                         '',
                         'nsi'
                     ),
@@ -76,7 +70,6 @@ AS $function$
                     ' ',
                     'g'
                 )
-
             ELSE trim(p.prosrc)
         END AS function_body
 
