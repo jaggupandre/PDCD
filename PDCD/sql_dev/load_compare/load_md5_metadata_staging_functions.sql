@@ -1,8 +1,8 @@
 --=================================================
--- Table: pdcd_schema.md5_metadata_staging_tbl
+-- Table: pdcd_schema.load_md5_metadata_staging_functions
 --=================================================
--- DROP TABLE IF EXISTS pdcd_schema.md5_metadata_staging_tbl;
--- CREATE TABLE pdcd_schema.md5_metadata_staging_tbl (
+-- DROP TABLE IF EXISTS pdcd_schema.load_md5_metadata_staging_functions;
+-- CREATE TABLE pdcd_schema.load_md5_metadata_staging_functions (
 --   metadata_id BIGSERIAL PRIMARY KEY,
 --   snapshot_id INT NOT NULL REFERENCES pdcd_schema.snapshot_tbl(snapshot_id) ON DELETE CASCADE,
 --   schema_name TEXT NOT NULL,
@@ -16,11 +16,11 @@
 -- );
 
 --=================================================
--- Function: pdcd_schema.load_md5_metadata_staging_tbl
+-- Function: pdcd_schema.load_md5_metadata_staging_functions
 --=================================================
--- drop table pdcd_schema.md5_metadata_staging_tbl;
+-- drop table pdcd_schema.load_md5_metadata_staging_functions;
 
-CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_staging_tbl(
+CREATE OR REPLACE FUNCTION pdcd_schema.load_md5_metadata_staging_functions(
     p_table_list TEXT[] DEFAULT NULL
 )
 RETURNS TABLE (
@@ -44,22 +44,10 @@ AS $function$
         LIMIT 1   -- only latest snapshot
     ),
     combined_data AS (
-        SELECT DISTINCT * FROM pdcd_schema.get_table_columns_md5(p_table_list)
-        UNION ALL
-        SELECT DISTINCT * FROM pdcd_schema.get_table_constraints_md5(p_table_list)
-        UNION ALL
-        SELECT DISTINCT * FROM pdcd_schema.get_table_indexes_md5(p_table_list)
-        UNION ALL
-        SELECT DISTINCT * FROM pdcd_schema.get_table_references_md5(p_table_list)
-        UNION ALL
-        SELECT DISTINCT * FROM pdcd_schema.get_table_triggers_md5(p_table_list)
-        UNION ALL
-        SELECT DISTINCT * FROM pdcd_schema.get_table_sequences_md5(p_table_list)
-        -- UNION ALL
-        -- SELECT DISTINCT * FROM pdcd_schema.get_table_functions_md5(p_table_list)
+        SELECT DISTINCT * FROM pdcd_schema.get_table_functions_md5(p_table_list)
     ),
     inserted AS (
-        INSERT INTO pdcd_schema.md5_metadata_staging_tbl (
+        INSERT INTO pdcd_schema.md5_metadata_staging_functions (
             snapshot_id,
             schema_name,
             object_type,
@@ -101,5 +89,6 @@ AS $function$
 $function$;
 
 
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/load_md5_metadata_staging_tbl.sql'
--- SELECT * FROM pdcd_schema.load_md5_metadata_staging_tbl(ARRAY['analytics_schema']);
+
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/load_md5_metadata_staging_functions.sql'
+-- SELECT * FROM pdcd_schema.load_md5_metadata_staging_functions(ARRAY['analytics_schema']);

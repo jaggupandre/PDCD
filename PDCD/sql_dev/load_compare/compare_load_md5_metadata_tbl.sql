@@ -104,18 +104,18 @@ AS $function$
             object_md5
         FROM pdcd_schema.get_table_sequences_md5(p_table_list)
         
-        UNION ALL
+    --     UNION ALL
         
-        -- Functions (NEW)
-        SELECT 
-            schema_name,
-            object_type,
-            object_type_name,
-            object_subtype,
-            object_subtype_name,
-            object_subtype_details,
-            object_md5
-        FROM pdcd_schema.get_table_functions_md5(p_table_list)
+    --     -- Functions (NEW)
+    --     SELECT 
+    --         schema_name,
+    --         object_type,
+    --         object_type_name,
+    --         object_subtype,
+    --         object_subtype_name,
+    --         object_subtype_details,
+    --         object_md5
+    --     FROM pdcd_schema.get_table_functions_md5(p_table_list)
     ),
     
     -- Get staging metadata (previous snapshot) for all object types
@@ -353,3 +353,5 @@ AS $function$
         i.object_subtype_name,
         i.change_type;
 $function$;
+
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/load_compare/compare_load_md5_metadata_tbl.sql'
