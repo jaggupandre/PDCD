@@ -53,6 +53,7 @@ AS $function$
         ) AS object_md5
 
     FROM pdcd_schema.get_sequence_details(p_table_list) AS gtd
+    WHERE COALESCE(NULLIF(gtd.table_name, ''), '') <> ''
     ORDER BY gtd.schema_name, gtd.table_name;
 $function$;
 

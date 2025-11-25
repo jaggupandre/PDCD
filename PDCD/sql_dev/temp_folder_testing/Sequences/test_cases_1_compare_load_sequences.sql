@@ -164,7 +164,8 @@ from pdcd_schema.md5_metadata_tbl WHERE snapshot_id = (SELECT MAX(snapshot_id) F
            4 | analytics_schema | employees        | Sequence       | employees_payroll_id_seq    | 0cb7d67d62894dcb262448a0bb18b2b4 | DELETED     | owned_by:analytics_schema.employees.comp_code,sequence_type:IDENTITY,privileges:,data_type:integer,start_value:1,minimum_value:1,maximum_value:2147483647,increment_by:1,cycle_option:NO,cache_size:1
 (6 rows)
 -- ! GOT A BUG,
-    -- That when manual sequence is not created and column does not own it that then object_type_name will be NULL and there will be an error loading and compare_load as well
+    -- when manually sequence is not created within table and column does not own it that then 
+    -- !object_type_name will be NULL and there will be an error loading and compare_load as well
 
 -- Purpose:
 -- Validate that dropping sequence-backed columns removes sequences
