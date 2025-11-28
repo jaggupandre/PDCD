@@ -1,12 +1,12 @@
-CREATE OR REPLACE FUNCTION pdcd_schema.get_table_sequences_md5(
+CREATE OR REPLACE FUNCTION pdcd_schema.get_object_sequences_md5(
     p_table_list TEXT[] DEFAULT NULL
 )
 RETURNS TABLE(
     schema_name TEXT,
     object_type TEXT,
     object_type_name TEXT,
-    object_subtype TEXT,          -- sequence
-    object_subtype_name TEXT,     -- sequence_name
+    object_subtype TEXT,
+    object_subtype_name TEXT,
     object_subtype_details TEXT,  -- metadata string
     object_md5 TEXT               -- MD5 hash of details
 )
@@ -14,12 +14,11 @@ LANGUAGE SQL
 AS $function$
     SELECT
         gtd.schema_name,
-        'Table' AS object_type,
-        gtd.table_name AS object_type_name,
-        'Sequence' AS object_subtype,
-        gtd.sequence_name AS object_subtype_name,
-        -- Build sequence details for tracking changes
-        -- gtd.object_subtype_details AS object_subtype_details,
+        'Sequence' AS object_type,
+        gtd.sequence_name AS object_type_name,
+        NULL AS object_subtype,
+        NULL AS object_subtype_name,
+
         CONCAT_WS(
             ',',
             CONCAT('owned_by:', COALESCE(gtd.owned_by, '')),
@@ -34,8 +33,6 @@ AS $function$
             CONCAT('cache_size:', COALESCE(gtd.cache_size::TEXT, ''))
         ) AS object_subtype_details,
 
-        -- Create MD5 hash from normalized concatenated string
-        -- MD5(gtd.object_subtype_details) AS object_md5
         MD5(
             CONCAT_WS(
                 ',',
@@ -53,9 +50,13 @@ AS $function$
         ) AS object_md5
 
     FROM pdcd_schema.get_sequence_details(p_table_list) AS gtd
-    WHERE COALESCE(NULLIF(gtd.table_name, ''), '') <> ''
+    WHERE COALESCE(NULLIF(gtd.table_name, ''), '') = ''
     ORDER BY gtd.schema_name, gtd.table_name;
 $function$;
 
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/Objects/object_type_table/sequences/get_table_sequences_md5.sql'
--- SElECT * FROM pdcd_schema.get_table_sequences_md5(ARRAY['analytics_schema']);
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/Objects/object_type_sequences/get_object_sequences_md5.sql'
+-- Example usage:
+-- drop function get_table_columns_md5;
+-- SELECT * FROM pdcd_schema.get_sequences_md5(ARRAY['analytics_schema']);
+
+

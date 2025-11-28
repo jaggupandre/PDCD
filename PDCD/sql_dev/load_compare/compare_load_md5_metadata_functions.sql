@@ -37,6 +37,16 @@ AS $function$
             object_subtype_details,
             object_md5
         FROM pdcd_schema.get_table_functions_md5(p_function_list)
+        UNION ALL
+        SELECT 
+            schema_name,
+            object_type,
+            object_type_name,  -- Function name
+            object_subtype,
+            object_subtype_name,
+            object_subtype_details,
+            object_md5
+        FROM pdcd_schema.get_object_sequences_md5(p_function_list)
     ),
     
     -- Get staging function metadata (previous snapshot)

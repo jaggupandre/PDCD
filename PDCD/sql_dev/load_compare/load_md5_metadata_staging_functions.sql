@@ -45,6 +45,8 @@ AS $function$
     ),
     combined_data AS (
         SELECT DISTINCT * FROM pdcd_schema.get_table_functions_md5(p_table_list)
+        UNION ALL
+        SELECT DISTINCT * FROM pdcd_schema.get_object_sequences_md5(p_table_list)
     ),
     inserted AS (
         INSERT INTO pdcd_schema.md5_metadata_staging_functions (
