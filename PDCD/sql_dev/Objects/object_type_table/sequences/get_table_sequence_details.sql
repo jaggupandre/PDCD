@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION pdcd_schema.get_sequence_details(
+CREATE OR REPLACE FUNCTION pdcd_schema.get_table_sequence_details(
     p_sequence_list TEXT[] DEFAULT NULL
 )
 RETURNS TABLE (
@@ -105,8 +105,8 @@ $function$;
 
 
 
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/Objects/table_objects/sequences/get_sequences_details.sql'
--- SElECT * FROM pdcd_schema.get_sequence_details(ARRAY['analytics_schema']);
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/Objects/object_type_table/sequences/get_table_sequence_details.sql'
+-- SElECT * FROM pdcd_schema.get_table_sequence_details(ARRAY['analytics_schema']);
 --         SELECT 
 --        s.*
 --         FROM pg_sequence s

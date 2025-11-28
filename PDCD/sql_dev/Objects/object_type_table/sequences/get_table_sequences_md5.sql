@@ -52,10 +52,10 @@ AS $function$
             )
         ) AS object_md5
 
-    FROM pdcd_schema.get_sequence_details(p_table_list) AS gtd
+    FROM pdcd_schema.get_table_sequence_details(p_table_list) AS gtd
     WHERE COALESCE(NULLIF(gtd.table_name, ''), '') <> ''
     ORDER BY gtd.schema_name, gtd.table_name;
 $function$;
 
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/Objects/table_objects/sequences/get_table_sequences_md5.sql'
+-- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/Objects/object_type_table/sequences/get_table_sequences_md5.sql'
 -- SElECT * FROM pdcd_schema.get_table_sequences_md5(ARRAY['analytics_schema']);
