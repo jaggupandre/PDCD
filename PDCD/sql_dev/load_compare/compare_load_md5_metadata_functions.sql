@@ -50,7 +50,6 @@ AS $function$
             object_subtype_details,
             object_md5
         FROM pdcd_schema.md5_metadata_staging_functions
-        WHERE object_type = 'Function'
     ),
     
     -- Step 1: RENAMED functions (same MD5, different function name)

@@ -13,13 +13,15 @@ RETURNS TABLE (
     owner_role TEXT,
     privileges TEXT,
     dependencies TEXT,
+    is_security_definer BOOLEAN,
+    config_settings_text TEXT,
     function_body TEXT
 )
 LANGUAGE SQL
 AS $function$
     SELECT
         n.nspname AS schema_name,
-        p.proname AS function_name,
+        CONCAT(p.proname, '(', pg_get_function_identity_arguments(p.oid), ')') AS function_name,
 
         pg_get_function_arguments(p.oid) AS argument_types,
         pg_get_function_identity_arguments(p.oid) AS argument_modes,
@@ -47,8 +49,11 @@ AS $function$
             WHERE objid = p.oid
         ) AS dependencies,
 
+        p.prosecdef AS is_security_definer,                -- SECURITY DEFINER
+        array_to_string(p.proconfig, ', ') AS config_settings_text,
+
         --------------------------------------------------------------------
-        -- FUNCTION_BODY EXTRACTION (SQL + PLPGSQL, DECLARE + BEGIN, No END)
+        -- FUNCTION BODY EXTRACTION (SQL + PLpgSQL)
         --------------------------------------------------------------------
         CASE
             WHEN l.lanname = 'sql' THEN
