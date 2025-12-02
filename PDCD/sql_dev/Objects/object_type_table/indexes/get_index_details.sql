@@ -1,9 +1,11 @@
+---==== Index Details Function Updated to include Views and Materialized Views ====---
 CREATE OR REPLACE FUNCTION pdcd_schema.get_index_details(
     p_table_list TEXT[] DEFAULT NULL
 )
 RETURNS TABLE(
     schema_name TEXT,
-    table_name TEXT,
+    object_type TEXT,
+    object_type_name TEXT,
     index_name TEXT,
     tablespace TEXT,
     indexdef TEXT,
@@ -15,24 +17,23 @@ RETURNS TABLE(
 )
 LANGUAGE sql
 AS $function$
-WITH input_tables AS (
+WITH input_objects AS (
 
-    -- CASE 1: No input → all non-system tables
-    SELECT n.nspname || '.' || c.relname AS full_table_name
+    /* CASE 1: No input -> all tables, views & materialized views */
+    SELECT n.nspname || '.' || c.relname AS full_object_name
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
-    WHERE c.relkind = 'r'
-      AND (p_table_list IS NULL OR array_length(p_table_list, 1) IS NULL)
+    WHERE c.relkind IN ('r','m')
+      AND (p_table_list IS NULL OR array_length(p_table_list,1) IS NULL)
       AND n.nspname NOT IN ('pg_catalog','information_schema')
 
     UNION ALL
 
-    -- CASE 2: Schema-only input
-    SELECT n.nspname || '.' || c.relname AS full_table_name
+    /* CASE 2: Schema-only input */
+    SELECT n.nspname || '.' || c.relname
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
-    WHERE c.relkind = 'r'
-      AND p_table_list IS NOT NULL
+    WHERE c.relkind IN ('r','m')
       AND EXISTS (
           SELECT 1 FROM unnest(p_table_list) t
           WHERE position('.' IN t) = 0
@@ -41,8 +42,8 @@ WITH input_tables AS (
 
     UNION ALL
 
-    -- CASE 3: Fully-qualified schema.table input
-    SELECT unnest(p_table_list) AS full_table_name
+    /* CASE 3: schema.object input */
+    SELECT unnest(p_table_list)
     WHERE p_table_list IS NOT NULL
       AND EXISTS (
           SELECT 1 FROM unnest(p_table_list) t
@@ -52,13 +53,20 @@ WITH input_tables AS (
 
 SELECT
     n.nspname::TEXT AS schema_name,
-    t.relname::TEXT AS table_name,
+
+    CASE 
+        WHEN t.relkind = 'r' THEN 'Table'
+       -- WHEN t.relkind = 'v' THEN 'View'
+        WHEN t.relkind = 'm' THEN 'Materialized View'
+    END AS object_type,
+
+    t.relname::TEXT AS object_type_name,
     i.relname::TEXT AS index_name,
     ts.spcname::TEXT AS tablespace,
     pg_get_indexdef(i.oid)::TEXT AS indexdef,
     x.indisunique AS is_unique,
     x.indisprimary AS is_primary,
-    -- Get ordered list of indexed columns
+
     array_to_string(
         ARRAY(
             SELECT a.attname
@@ -68,22 +76,19 @@ SELECT
         ),
         ','
     ) AS index_columns,
-    -- Get index predicate (for partial indexes)
+
     pg_get_expr(x.indpred, x.indrelid)::TEXT AS index_predicate,
-    -- Get access method (btree, gin, gist, etc.)
     am.amname::TEXT AS access_method
+
 FROM pg_class t
 JOIN pg_namespace n ON n.oid = t.relnamespace
 JOIN pg_index x ON x.indrelid = t.oid
 JOIN pg_class i ON i.oid = x.indexrelid
 LEFT JOIN pg_tablespace ts ON ts.oid = i.reltablespace
 JOIN pg_am am ON am.oid = i.relam
-WHERE (n.nspname || '.' || t.relname) IN (SELECT full_table_name FROM input_tables)
+
+WHERE (n.nspname || '.' || t.relname) IN (SELECT full_object_name FROM input_objects)
 ORDER BY n.nspname, t.relname, i.relname;
 $function$;
 
--- \i '/Users/jagdish_pandre/meta_data_report/PDCD/PDCD/sql_dev/Objects/table_objects/indexes/get_index_details.sql'
-
--- SELECT * FROM pdcd_schema.get_index_details();
--- SELECT * FROM get_index_details(ARRAY['public','legacy']);
--- SELECT * FROM get_index_details(ARRAY['public.people','sales.region_sales_west']);
+-- SELECT * FROM pdcd_schema.get_index_details(ARRAY['sales','hr']);
